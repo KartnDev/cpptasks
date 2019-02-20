@@ -1,0 +1,20 @@
+#include <iostream>
+#include <string>
+#include <conio.h>
+
+int main()
+{
+	std::string inputStr;
+	std::getline(std::cin, inputStr);
+	unsigned WordCnt = 0; //WordCount
+	for (unsigned i = 0; i < inputStr.length(); i++)
+	{
+		if (inputStr.at(i) == *" ")
+		{
+			WordCnt++;
+		}
+	}
+	std::string *WordArr = new std::string[]();
+
+	return 0;
+}

@@ -1,0 +1,3 @@
+﻿  Main.cpp
+c:\users\dima\source\repos\rlesson6\rlesson6\main.cpp(64): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+  Rlesson6.vcxproj -> C:\Users\Dima\source\repos\Rlesson6\Debug\Rlesson6.exe
