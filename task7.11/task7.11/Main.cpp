@@ -20,6 +20,8 @@ int main()
 			word_counter++;
 		}
 	}
+
+
 	std::string *word_arr = new std::string[word_counter];
 	int words = 0;
 
@@ -69,10 +71,7 @@ int main()
 		}
 	}
 
-
-
-
-
+	delete[] word_arr;
 
 	_getch();
 	return EXIT_SUCCESS;	//define EXIT_SUCCESS as 0 (in iostream)
