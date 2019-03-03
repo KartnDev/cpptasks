@@ -1,0 +1,4 @@
+﻿  Main.cpp
+c:\users\dmutp\source\repos\task7.11\task7.11\main.cpp(16): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\dmutp\source\repos\task7.11\task7.11\main.cpp(26): warning C4018: <: несоответствие типов со знаком и без знака
+  task7.11.vcxproj -> C:\Users\dmutp\source\repos\task7.11\Debug\task7.11.exe
