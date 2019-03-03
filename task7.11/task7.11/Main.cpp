@@ -4,6 +4,46 @@
 #include <string> 
 
 
+std::string split_string_by_words(std::string string_name)
+{
+	//function takes string line and returns array of words(strings)
+
+
+
+	return "";
+}
+
+
+
+
+std::string sort_words_by_simbol(std::string word_arr[], char argument_simbol)	 
+
+{	/*
+	@	function takes first arg as ARRAY OF STRINGS (that strings is words) 
+	@   and second arg is flag-simbol
+	@	if word have first simbol == argument_simbol 
+	@	this word will override by 'null_string' 
+	@	after all result_arr(string) will be returned 
+	@	result_arr have only words which starts from 'argument_simbol'
+	*/
+
+
+
+	return "";
+}
+
+
+std::string convert_text_to_string(std::string file_name)		
+{
+	//funtion which taking file name and reading file then returning converted string
+
+
+	return "";
+}
+
+
+
+
 
 int main()
 {
@@ -73,6 +113,7 @@ int main()
 
 	delete[] word_arr;
 
+	
 	_getch();
 	return EXIT_SUCCESS;	//define EXIT_SUCCESS as 0 (in iostream)
 }
