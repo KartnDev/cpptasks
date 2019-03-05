@@ -1,3 +1,3 @@
 ﻿  Main.cpp
-c:\users\dmutp\source\repos\task7.11\task7.11\main.cpp(86): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+c:\users\dmutp\source\repos\task7.11\task7.11\main.cpp(52): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
   task7.11.vcxproj -> C:\Users\dmutp\source\repos\task7.11\x64\Debug\task7.11.exe
