@@ -1,0 +1,3 @@
+﻿  Source.cpp
+c:\users\dmutp\source\repos\app_opengl\app_opengl\source.cpp(53): warning C4244: return: преобразование "WPARAM" в "int", возможна потеря данных
+  App_OpenGL.vcxproj -> C:\Users\dmutp\source\repos\App_OpenGL\x64\Debug\App_OpenGL.exe
