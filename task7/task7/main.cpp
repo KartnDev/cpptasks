@@ -1,6 +1,6 @@
 #include "Header.h"
 
-//main
+
 void recieve(std::string str, std::string *key_words, unsigned key_lenght)
 {
 
@@ -114,7 +114,7 @@ std::string read_file(const char *filename)
 
 
 
-//функция, которая должна заменить recieve
+//ГґГіГ­ГЄГ¶ГЁГї, ГЄГ®ГІГ®Г°Г Гї Г¤Г®Г«Г¦Г­Г  Г§Г Г¬ГҐГ­ГЁГІГј recieve
 std::string find_word_and_index(std::string str, std::string key_word, unsigned &index) 
 {
 	
