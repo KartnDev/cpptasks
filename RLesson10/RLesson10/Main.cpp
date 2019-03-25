@@ -1,6 +1,7 @@
 #include <iostream>
 #include <conio.h>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -105,14 +106,16 @@ int main()
 {
 	setlocale(LC_ALL, "ru");
 
+	
+
 	List<int> lst;
 
 	for (int i = 0; i < 10; i++)
 	{
-		lst.push_back(i*i);
+		lst.push_back(rand() % 100);
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < lst.getsize(); i++)
 	{
 		cout << lst[i] << endl;
 	}
