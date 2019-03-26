@@ -1,3 +1,2 @@
 ﻿  Main.cpp
-c:\users\dmutp\source\repos\rlesson10\rlesson10\main.cpp(102): warning C4715: List<int>::operator[]: значение возвращается не при всех путях выполнения
   RLesson10.vcxproj -> C:\Users\dmutp\source\repos\RLesson10\Debug\RLesson10.exe

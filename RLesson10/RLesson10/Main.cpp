@@ -12,11 +12,15 @@ class List
 public:
 	List(); // конструктор с вынесеным телом (реализацией)
 	~List(); // деструктор ---||---
-
+	void display_data();
 	void push_back(T data); // функция добавления элемента назад (листа)
-
-	int getsize() { return size; } //геттер(получить) размерности списка
-
+	void push_front(T data);
+	void insert(T data, int index);
+	void pop_back();
+	void pop_front(); // функция удаления головного элемента(первого)
+	void remove_at(int index);
+	void clear(); 
+	int getsize() { return SIZE; } //геттер(получить) размерности списка
 	//перегружаем оператор [] для того, чтобы можно было листать наш список
 	// реализация находится в main.cpp
 	T& operator[](const int index);
@@ -46,20 +50,35 @@ private:
 			this->p_next = p_next;
 		}
 	};
-	int size; // длина списка
+	int SIZE; // длина списка
 	Node<T> *head; // головной член списка
 };
 template <class T>
 List<T>::List()
 {
-	size = 0;
+	SIZE = 0;
 	head = nullptr;
 }
 
 template <class T>
 List<T>::~List()
 {
+	clear();
+}
 
+template<class T>
+void List<T>::display_data()
+{
+	Node<T>* current = this->head;
+
+	cout << current->data << endl;
+
+	while (current->p_next != nullptr)
+	{
+		current = current->p_next;
+		cout << current->data << endl;
+	} 
+	//cout << current->data << endl;
 }
 
 // тело функции добавления в конец списка 
@@ -80,22 +99,105 @@ void List<T>::push_back(T data)
 		}
 		current->p_next = new Node<T>(data);
 	}
-	size++;
+	SIZE++;
+}
+
+template<class T>
+void List<T>::push_front(T data)
+{
+	head = new Node<T>(data, head);
+	SIZE++;
+}
+
+template<class T>
+void List<T>::insert(T data, int index)
+{
+	if (index == 0)
+	{
+		push_front(data);
+	}
+	else
+	{
+		Node<T>* p_prev = this->head;
+
+		for (int i = 0; i < index - 1; i++)
+		{
+			p_prev = p_prev->p_next;
+		}
+
+		Node<T>* new_node = new Node<T>(data, p_prev->p_next);
+
+		p_prev->p_next = new_node;
+
+		SIZE++;
+	}
+}
+
+template<class T>
+void List<T>::pop_back()
+{
+	remove_at(SIZE - 1);
+}
+
+template<class T>
+void List<T>::pop_front()
+{	 //переносим головную ноду на следующую ноду, а данную(бывшую головную) 
+	 //записываем в временную переменную temp 
+	Node<T> *temp = head;
+	head = head->p_next;
+	delete temp;
+	SIZE--;
+}
+
+template<class T>
+void List<T>::remove_at(int index)
+{
+	if (index == 0)
+	{
+		pop_front();
+	}
+	else
+	{
+		Node<T>* p_prev = this->head;
+		for (int i = 0; i < index - 1; i++)
+		{
+			p_prev = p_prev->p_next;
+		}
+
+		Node<T>* p_removed = p_prev -> p_next;
+
+		p_prev->p_next = p_removed -> p_next;
+
+		delete p_removed;
+		SIZE--;
+	}
+
+
+}
+
+template<class T>
+void List<T>::clear()
+{
+	while ((bool)SIZE) // size > 0
+	{
+		pop_front();
+	}
+
 }
 
 template<class T>
 T & List<T>::operator[](const int index)
 {
 	int counter = 0;
-	Node<T> *current = this->head;
+	Node<T> *p_current = this->head;
 
-	while(current != nullptr)
+	while(p_current != nullptr)
 	{
 		if (counter == index)
 		{
-			return current -> data;
+			return p_current -> data;
 		}
-		current = current->p_next;
+		p_current = p_current->p_next;
 
 		counter++;
 	}
@@ -108,18 +210,17 @@ int main()
 
 	
 
-	List<int> lst;
+	List<int> list;
 
-	for (int i = 0; i < 10; i++)
-	{
-		lst.push_back(rand() % 100);
-	}
+	list.push_back(5);
+	list.push_front(7);
+	list.push_back(100);
+	list.display_data();
+	list.head;
+	cout << endl;
+	list.insert(77, 2);
+	list.display_data();
 
-	for (int i = 0; i < lst.getsize(); i++)
-	{
-		cout << lst[i] << endl;
-	}
-
-	_getch();
+	system("pause");
 	return EXIT_SUCCESS;
 }
