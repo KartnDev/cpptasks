@@ -1,2 +1,3 @@
 ﻿  main.cpp
-LINK : fatal error LNK1168: не удается открыть C:\Users\dmutp\source\repos\task7\x64\Debug\task7.exe для записи
+C:\Users\Dmutp\Desktop\task7\task7\main.cpp(84): warning C4715: find_word_and_index: значение возвращается не при всех путях выполнения
+  task7.vcxproj -> C:\Users\Dmutp\Desktop\task7\x64\Debug\task7.exe
