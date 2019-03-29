@@ -1,3 +1,4 @@
+/*include*/
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -5,6 +6,8 @@
 #include <algorithm>
 
 
+/*main*/
+/*char*/
 std::string* get_keys_in_str(std::string keys_str, unsigned& return_counter)
 {
 	unsigned word_count = 1;
@@ -68,11 +71,20 @@ std::string read_file(const char* filename)
 std::string find_word_and_index(std::string str, std::string key_word, unsigned &index)
 {
 	unsigned flag = 0;
+	bool ignore = false;
 	for (unsigned i = 0; i < str.length() - key_word.length(); i++)
 	{
 		for (unsigned j = 0; j < key_word.length(); j++)
 		{
-			if (str[i + j] == key_word[j])
+			if (str[i] == *"*" && str[i+1] == *"/" && ignore)
+			{
+				ignore = false;
+			}
+			if (str[i] == *"/" && str[i+1] == *"*")
+			{
+				ignore = true;
+			}
+			if (str[i + j] == key_word[j] && !ignore)
 			{
 				flag++;
 			}
@@ -88,10 +100,9 @@ std::string find_word_and_index(std::string str, std::string key_word, unsigned 
 			}
 		}
 	}
+	index = -1;
 	return "";
 }
-
-
 
 
 int main()
@@ -105,13 +116,16 @@ int main()
 	unsigned key_counter;
 
 
-	std::string str = read_file("Source.cpp");
+	std::string str = read_file("main.cpp");
 	std::string* arr = get_keys_in_str(keys, key_counter);
 
-
-	find_word_and_index(str, arr[0], key_counter);
-
+	unsigned temp_index;
+	for (unsigned i = 0; i < key_counter; i++)
+	{
+		find_word_and_index(str, arr[i], temp_index);
+	}
 	
+
 	delete[] arr;
 
 	_getch();
