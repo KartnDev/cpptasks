@@ -1,9 +1,11 @@
-#include "Header.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <conio.h>
 #include <algorithm>
 
 
-
-std::string* get_keys_in_str(std::string keys_str, unsigned &return_counter)
+std::string* get_keys_in_str(std::string keys_str, unsigned& return_counter)
 {
 	unsigned word_count = 1;
 	for (unsigned i = 0; i < keys_str.length(); i++)
@@ -14,7 +16,7 @@ std::string* get_keys_in_str(std::string keys_str, unsigned &return_counter)
 		}
 	}
 
-	std::string *key_words = new std::string[word_count]();
+	std::string* key_words = new std::string[word_count]();
 
 	unsigned count = 0;
 	for (unsigned i = 0; i < keys_str.length(); i++)
@@ -37,7 +39,7 @@ std::string* get_keys_in_str(std::string keys_str, unsigned &return_counter)
 
 
 
-std::string read_file(const char *filename)
+std::string read_file(const char* filename)
 {
 	std::ifstream fs(filename);
 	std::string line;
@@ -63,25 +65,31 @@ std::string read_file(const char *filename)
 
 
 
-std::string find_word_and_index(std::string str, std::string key_word, unsigned &index) 
+std::string find_word_and_index(std::string str, std::string key_word, unsigned &index)
 {
 	unsigned flag = 0;
-	for (unsigned i = 0; i < str.length() -key_word.length(); i++)
+	for (unsigned i = 0; i < str.length() - key_word.length(); i++)
 	{
 		for (unsigned j = 0; j < key_word.length(); j++)
 		{
 			if (str[i + j] == key_word[j])
 			{
 				flag++;
-				if (flag == key_word.length())
-				{
-					index = i;
-					return key_word;
-				}
+			}
+			else
+			{
+				flag = 0;
+			}
+			if (flag == key_word.length())
+			{
+				std::cout << key_word << ": " << i << std::endl;
+				index = i;
+				return key_word;
 			}
 		}
 	}
-}  
+	return "";
+}
 
 
 
@@ -92,32 +100,20 @@ int main()
 
 	std::string keys;
 	getline(std::cin, keys);
-	
-	
+
+
 	unsigned key_counter;
 
 
-	std::string str = read_file("main.cpp");
-	std::string *arr = get_keys_in_str(keys, key_counter);
+	std::string str = read_file("Source.cpp");
+	std::string* arr = get_keys_in_str(keys, key_counter);
+
+
+	find_word_and_index(str, arr[0], key_counter);
+
 	
-	unsigned *numerat_arr = new unsigned[key_counter];
-
-
-	unsigned index =0;
-	for (unsigned i = 0; i < key_counter; i++) 
-	{
-		find_word_and_index(str, arr[i], index);
-		numerat_arr[i] = index;
-		index;
-	}
-	std::sort(numerat_arr, numerat_arr + key_counter);
-
-	for (unsigned i = 0; i < key_counter; i++)
-	{
-		
-	}
 	delete[] arr;
-	
+
 	_getch();
 
 
