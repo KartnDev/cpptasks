@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\dmutp\source\repos\project3fun\main.cpp(28): error C2601: main: недопустимые локальные определения функций
+  c:\users\dmutp\source\repos\project3fun\main.cpp(15): note: эта строка содержит скобку "{", которая пока не имеет парной
+c:\users\dmutp\source\repos\project3fun\main.cpp(15): fatal error C1075: "{": не найдена несоответствующая лексема

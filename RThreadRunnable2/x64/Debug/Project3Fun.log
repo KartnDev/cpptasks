@@ -1,0 +1,3 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Project3Fun.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  main.cpp
+  Project3Fun.vcxproj -> C:\Users\Dmutp\source\repos\RThreadRunnable2\x64\Debug\ThreadRunnable2.exe
