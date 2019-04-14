@@ -1,0 +1,3 @@
+﻿  Main.cpp
+C:\Users\Dmutp\Desktop\RLesson10\RLesson10\Main.cpp(238): warning C4715: List::operator[]: значение возвращается не при всех путях выполнения
+  RLesson10.vcxproj -> C:\Users\Dmutp\Desktop\RLesson10\x64\Debug\RLesson10.exe

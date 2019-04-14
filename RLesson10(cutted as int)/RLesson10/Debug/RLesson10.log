@@ -1,0 +1,2 @@
+﻿Main.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: void __thiscall List::display_data(void)" (?display_data@List@@QAEXXZ) в функции _main
+C:\Users\Dmutp\Desktop\RLesson10\Debug\RLesson10.exe : fatal error LNK1120: неразрешенных внешних элементов: 1

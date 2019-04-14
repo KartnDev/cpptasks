@@ -1,0 +1,7 @@
+﻿  Main.cpp
+  Создание кода
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\Dmutp\Desktop\RLesson10\RLesson10\Main.cpp(238): warning C4715: List::operator[]: значение возвращается не при всех путях выполнения
+  All 26 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
+  RLesson10.vcxproj -> C:\Users\Dmutp\Desktop\RLesson10\Release\RLesson10.exe
