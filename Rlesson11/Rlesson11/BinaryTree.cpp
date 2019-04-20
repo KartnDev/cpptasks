@@ -1,5 +1,6 @@
 #include "BinaryTree.h"
 #include <iostream>
+#include <xtree>
 
 using namespace std;
 
@@ -20,18 +21,7 @@ void BinaryTree::remote_at(int index)
 
 void BinaryTree::print_data()
 {
-	Node* current = this->p_root;
-	cout << current->data << endl;
-	while (current != nullptr)
-	{
-		current = current->p_left;
-		cout << current->data <<endl;
-	}
-	while (current != nullptr)
-	{
-		current = current->p_right;
-		cout << current->data << endl;
-	}
+
 }
 
 void BinaryTree::at(int index)
@@ -42,20 +32,19 @@ void BinaryTree::clear()
 {
 }
 
-void BinaryTree::insert(int data)
+void BinaryTree::insert(int key)
 {
 	if (SIZE == 0)
 	{
-		p_root = new Node(data);
+		p_root = new Node(key);
 		
 	}
 	else
 	{
 		Node* current = this->p_root;
-		bool _sfrf=true; //start from root flag
-		while (_sfrf)
+		while (true)
 		{
-			if (current->data > data)
+			if (current->key > key)
 			{
 				if (current->p_left != nullptr)
 				{
@@ -63,11 +52,10 @@ void BinaryTree::insert(int data)
 				}
 				else
 				{
-					current->p_left = new Node(data);
-					_sfrf = false;
+					break;
 				}
 			}
-			if (current->data < data)
+			if (current->key < key)
 			{
 				if (current->p_right != nullptr)
 				{
@@ -75,22 +63,25 @@ void BinaryTree::insert(int data)
 				}
 				else
 				{
-					current->p_right = new Node(data);
-					_sfrf = false;
+					break;
 				}
 			}
-			if (current->data > data)
-			{
-				current->p_left = new Node(data);
-			}
-			if (current->data < data)
-			{
-				current->p_right = new Node(data);
-			}
+		}
+		if (current->key > key)
+		{
+			current->p_left = new Node(key);
+		}
+		else if (current->key < key)
+		{
+			current->p_right = new Node(key);
 		}
 	}
 	SIZE++;
 }
+
+
+
+
 
 int* BinaryTree::toArray()
 {
@@ -104,16 +95,14 @@ int BinaryTree::get_size()
 
 int main()
 {
-
 	BinaryTree tree;
 	tree.insert(10);
 	tree.insert(11);
 	tree.insert(9);
-	tree.insert(130);
 	tree.insert(50);
-	tree.insert(30);
-	tree.insert(100);
-
+	tree.insert(13);
+	tree.insert(5);
+	tree.insert(1);
 	cout << 1;
 
 
