@@ -3,163 +3,204 @@
 using namespace std;
 
 
-struct Node {
-	int value;
-	Node* left;
-	Node* right;
-};
 
-class BinaryTree {
+class BinaryTree 
+{
+	class Node;
+
 public:
 	BinaryTree();
 	~BinaryTree();
 
-	void insert(int key);
 	Node* search(int key);
+
+	void insert(int key);
 	void destroy_tree();
 	void inorder_print();
 	void postorder_print();
 	void preorder_print();
+
 	int get_size() { return SIZE; };
 
 
 
 private:
 
+	Node* search(int key, Node* leaf);
+
 	void destroy_tree(Node* leaf);
 	void insert(int key, Node* leaf);
-	Node* search(int key, Node* leaf);
 	void inorder_print(Node* leaf);
 	void postorder_print(Node* leaf);
 	void preorder_print(Node* leaf);
 
-	Node* root;
+
+	class Node
+	{
+	public:
+		Node* p_left;
+		Node* p_right;
+		int value;
+
+		Node(int value = 0, Node* p_left = nullptr, Node* p_right = 0)
+		{
+			this->p_left = p_left;
+			this->p_right = p_right;
+			this->value = value;
+		}
+	};
+	Node* p_root;
 	int SIZE;
 };
 
 
-BinaryTree::BinaryTree() {
+BinaryTree::BinaryTree() 
+{
 	SIZE = 0;
-	root = nullptr;
+	p_root = nullptr;
 }
 
 BinaryTree::~BinaryTree() {
 	destroy_tree();
 }
 
-void BinaryTree::destroy_tree(Node* leaf) {
-	if (leaf != nullptr) {
-		destroy_tree(leaf->left);
-		destroy_tree(leaf->right);
-		delete leaf;
+void BinaryTree::destroy_tree(Node* leaf) 
+{
+	if (leaf != nullptr) 
+	{
+		destroy_tree(leaf->p_left);
+		destroy_tree(leaf->p_right);
+		delete leaf; 
 	}
 }
 
-void BinaryTree::insert(int key, Node* leaf) {
+void BinaryTree::insert(int key, Node* leaf) 
+{
 
-	if (key < leaf->value) {
-		if (leaf->left != nullptr) {
-			insert(key, leaf->left);
+	if (key < leaf->value) 
+	{
+		if (leaf->p_left != nullptr) 
+		{
+			insert(key, leaf->p_left);
 		}
-		else {
-			leaf->left = new Node;
-			leaf->left->value = key;
-			leaf->left->left = nullptr;
-			leaf->left->right = nullptr;
+		else 
+		{
+			leaf->p_left = new Node(key);
 		}
 	}
-	else if (key >= leaf->value) {
-		if (leaf->right != nullptr) {
-			insert(key, leaf->right);
+	else if (key >= leaf->value) 
+	{
+		if (leaf->p_right != nullptr) 
+		{
+			insert(key, leaf->p_right);
 		}
-		else {
-			leaf->right = new Node;
-			leaf->right->value = key;
-			leaf->right->right = nullptr;
-			leaf->right->left = nullptr;
+		else 
+		{
+			leaf->p_right = new Node(key);
 		}
 	}
-
 }
 
-void BinaryTree::insert(int key) {
-	if (root != nullptr) {
-		insert(key, root);
+void BinaryTree::insert(int key) 
+{
+	if (p_root != nullptr) 
+	{
+		insert(key, p_root);
 	}
-	else {
-		root = new Node;
-		root->value = key;
-		root->left = nullptr;
-		root->right = nullptr;
+	else 
+	{
+		p_root = new Node(key);
 	}
 	SIZE++;
 }
 
-Node* BinaryTree::search(int key, Node* leaf) {
-	if (leaf != nullptr) {
-		if (key == leaf->value) {
+BinaryTree::Node* BinaryTree::search(int key, Node* leaf) 
+{
+	if (leaf != nullptr) 
+	{
+		if (key == leaf->value) 
+		{
 			return leaf;
 		}
-		if (key < leaf->value) {
-			return search(key, leaf->left);
+		if (key < leaf->value) 
+		{
+			return search(key, leaf->p_left);
 		}
-		else {
-			return search(key, leaf->right);
+		else 
+		{
+			return search(key, leaf->p_right);
 		}
 	}
-	else {
+	else 
+	{
 		return nullptr;
 	}
 }
 
-Node* BinaryTree::search(int key) {
-	return search(key, root);
+BinaryTree::Node* BinaryTree::search(int key) 
+{
+	return search(key, p_root);
 }
 
-void BinaryTree::destroy_tree() {
-	destroy_tree(root);
+void BinaryTree::destroy_tree() 
+{
+	destroy_tree(p_root);
 }
 
-void BinaryTree::inorder_print() {
-	inorder_print(root);
+void BinaryTree::inorder_print() 
+{
+	inorder_print(p_root);
 	cout << "\n";
 }
 
-void BinaryTree::inorder_print(Node* leaf) {
-	if (leaf != nullptr) {
-		inorder_print(leaf->left);
+void BinaryTree::inorder_print(Node* leaf) 
+{
+	if (leaf != nullptr) 
+	{
+		inorder_print(leaf->p_left);
 		cout << leaf->value << ",";
-		inorder_print(leaf->right);
+		inorder_print(leaf->p_right);
 	}
 }
 
-void BinaryTree::postorder_print() {
-	postorder_print(root);
+void BinaryTree::postorder_print() 
+{
+
+	postorder_print(p_root);
+	cout << "\n";
+
+}
+
+void BinaryTree::postorder_print(Node* leaf) 
+{
+
+	if (leaf != nullptr) 
+	{
+		inorder_print(leaf->p_left);
+		inorder_print(leaf->p_right);
+		cout << leaf->value << ",";
+	}
+}
+
+void BinaryTree::preorder_print() 
+{
+	preorder_print(p_root);
 	cout << "\n";
 }
 
-void BinaryTree::postorder_print(Node* leaf) {
-	if (leaf != nullptr) {
-		inorder_print(leaf->left);
-		inorder_print(leaf->right);
+void BinaryTree::preorder_print(Node* leaf) 
+{
+
+	if (leaf != nullptr) 
+	{
 		cout << leaf->value << ",";
+		inorder_print(leaf->p_left);
+		inorder_print(leaf->p_right);
 	}
 }
 
-void BinaryTree::preorder_print() {
-	preorder_print(root);
-	cout << "\n";
-}
-
-void BinaryTree::preorder_print(Node* leaf) {
-	if (leaf != nullptr) {
-		cout << leaf->value << ",";
-		inorder_print(leaf->left);
-		inorder_print(leaf->right);
-	}
-}
-
-int main() {
+int main() 
+{
 
 
 	BinaryTree* tree = new BinaryTree();
@@ -178,9 +219,9 @@ int main() {
 	tree->insert(3);
 	tree->insert(19);
 
-	tree->preorder_print();
-	tree->inorder_print();
-	tree->postorder_print();
+	tree->preorder_print();  // пред-заказ
+	tree->inorder_print();   // по порядку
+	tree->postorder_print(); // после заказа
 
 	delete tree;
 
