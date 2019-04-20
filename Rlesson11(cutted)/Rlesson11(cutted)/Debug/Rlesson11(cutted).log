@@ -1,0 +1,3 @@
+﻿  Main.cpp
+Main.obj : error LNK2001: эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы ""private: static int BinaryTree::SIZE" (?SIZE@BinaryTree@@0HA)"
+C:\Users\dmutp\source\repos\Rlesson11(cutted)\Debug\Rlesson11(cutted).exe : fatal error LNK1120: эхЁрчЁх°хээ√ї тэх°эшї ¤ыхьхэЄют: 1
