@@ -1,5 +1,5 @@
 #include <iostream>
-
+#define COUNT 10
 using namespace std;
 
 
@@ -19,7 +19,9 @@ public:
 	void inorder_print();
 	void postorder_print();
 	void preorder_print();
-
+	void preorder_print(BinaryTree tree);
+	int maxDepth();
+	void print2DUtil(int space);
 	int get_size() { return SIZE; };
 
 
@@ -27,11 +29,12 @@ public:
 private:
 
 	Node* search(int key, Node* leaf);
-
+	int maxDepth(Node* node);
 	void destroy_tree(Node* leaf);
 	void insert(int key, Node* leaf);
 	void inorder_print(Node* leaf);
 	void postorder_print(Node* leaf);
+	void print2DUtil(Node* root, int space);
 	void preorder_print(Node* leaf);
 
 
@@ -173,31 +176,87 @@ void BinaryTree::postorder_print()
 
 void BinaryTree::postorder_print(Node* leaf) 
 {
-
-	if (leaf != nullptr) 
+	if (leaf != nullptr)
 	{
-		inorder_print(leaf->p_left);
-		inorder_print(leaf->p_right);
-		cout << leaf->value << ",";
+		postorder_print(leaf->p_left);
+		postorder_print(leaf->p_right);
+		cout << leaf->value;
 	}
+	cout << "\n";
 }
 
 void BinaryTree::preorder_print() 
 {
-	preorder_print(p_root);
+	preorder_print(*this);
 	cout << "\n";
 }
 
-void BinaryTree::preorder_print(Node* leaf) 
+void BinaryTree::preorder_print(BinaryTree tree) 
 {
-
+	Node* leaf = tree.p_root;
 	if (leaf != nullptr) 
 	{
-		cout << leaf->value << ",";
 		inorder_print(leaf->p_left);
 		inorder_print(leaf->p_right);
+
+		if (leaf->p_right == nullptr && leaf->p_left == nullptr)
+		{
+			cout << leaf->value <<" ";
+			delete leaf;
+		}
+		cout << "\n";
 	}
 }
+int BinaryTree::maxDepth(Node* leaf)
+{
+	if (leaf == NULL)
+		return 0;
+	else
+	{
+		/* compute the depth of each subtree */
+		int lDepth = maxDepth(leaf->p_left);
+		int rDepth = maxDepth(leaf->p_right);
+
+		/* use the larger one */
+		if (lDepth > rDepth)
+			return(lDepth + 1);
+		else return(rDepth + 1);
+	}
+}
+int BinaryTree::maxDepth()
+{
+	int a = maxDepth(p_root);
+	cout << a;
+	return a;
+}
+
+void BinaryTree::print2DUtil(int space)
+{
+	print2DUtil(p_root, space);
+}
+
+void BinaryTree::print2DUtil(Node* leaf, int space)
+{
+	if (leaf == nullptr)
+		return;
+
+	// Increase distance between levels  
+	space += COUNT;
+
+	// Process right child first  
+	print2DUtil(leaf->p_right, space);
+
+	// Print current node after space  
+	// count  
+	cout << endl;
+	for (int i = COUNT; i < space; i++)
+		cout << " ";
+	cout << leaf->value << "\n";
+
+	// Process left child  
+	print2DUtil(leaf->p_left, space);
+}
+
 
 int main() 
 {
@@ -219,10 +278,7 @@ int main()
 	tree->insert(3);
 	tree->insert(19);
 
-	tree->preorder_print();  // пред-заказ
-	tree->inorder_print();   // по порядку
-	tree->postorder_print(); // после заказа
-
+	tree->print2DUtil(1);
 	delete tree;
 
 	return 0;
