@@ -17,10 +17,6 @@ void split_from_start(char*& string, int& string_lenght, int n)
 	}
 	else
 	{
-		for (int i = 0; i < n + 1; i++)
-		{
-			cout << "Встречен пробел\n";
-		}
 		char* temp = string;
 
 		string_lenght = string_lenght - n - 1;
@@ -29,7 +25,7 @@ void split_from_start(char*& string, int& string_lenght, int n)
 
 		for (int i = 0; i < string_lenght; i++)
 		{
-			string[i] = temp[i + n];
+			string[i] = temp[i + n + 1];
 		}
 	}
 }
@@ -42,10 +38,6 @@ void split_from_end(char*& string, int& string_lenght, int n)
 	}
 	else
 	{
-		for (int i = 0; i < string_lenght - n; i++)
-		{
-			cout << "Встречен пробeл\n";
-		}
 		char* temp = string;
 
 		string_lenght = n;
@@ -56,6 +48,7 @@ void split_from_end(char*& string, int& string_lenght, int n)
 		{
 			string[i] = temp[i];
 		}
+
 	}
 }
 
@@ -75,27 +68,31 @@ int main()
 
 
 
-
-
 	char* word = (char*)"   \nПривет, мир!   \n";
 	int len = 20;
 	
-	cout << "Данное слово:";
+
+
+
+
+	cout << "Данное слово: \n";
 	for (int i = 0; i < len; i++)
 	{
-		cout << word[i];
+		cout << "[" << i <<"] = "<< word[i] << endl;
 	}
-	cout << "c длиной(числом символов) = " << len <<"\n"<< LINE;
-
-	split(word, len);
+	cout << "c длиной(числом символов) = " << len <<"\n\n\n"<< LINE;
 
 
-	//вывод слова как массива чаров(без мусора)
+	cout << "Выполним удаление ненужных символов с начала и конца" << LINE <<"\n\n";
+	split(word, len); //та самая функция
+
+
+	cout << "После выполнения split слово: \n"; 
 	for (int i = 0; i < len; i++)
 	{
-		cout << word[i];
+		cout << "[" << i << "] = " << word[i] << endl;
 	}
-
+	cout << "\n\nС длиной(числом символов) = " << len << "\n\n";
 
 	system("pause");
 	return 0;
