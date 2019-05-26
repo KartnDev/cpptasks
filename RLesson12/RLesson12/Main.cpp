@@ -1,11 +1,4 @@
-/*наследование : платеж(суперкласс) -> 
--наследники:
--платеж по карте, 
--платеж по кэшу(наличными)
-по карте имеет реквизиты
-по наличными сдачу и те
-*/
-#include <iostream>
+п»ї#include <iostream>
 using namespace std;
 
 constexpr auto LINE = "=============================================================================\n";
@@ -23,34 +16,34 @@ public:
 	{
 		return spent_money;
 	}
-protected:
-	int purchase_or_pay(int price, int wallet_bank)
+public:
+	int purchase_or_pay(int price)
 	{
-		if (price < wallet_bank)
+		if (price < wallet)
 		{
 			spent_money += price;
-			return wallet_bank - price;
+			return wallet - price;
 		}
 		else
 		{
-			purchase_exception(price, wallet_bank);
+			purchase_exception(price);
 			return -1;
 		}
 	}
-	void purchase_exception(int price, int wallet_bank)
+	void purchase_exception(int price)
 	{
 		cout << LINE;
-		cout << "Денег недостаточно для совершения транзакции\n";
-		cout << "Банк вашего кошелька (" << wallet_bank << ") меньше чем цена совершаемой транзакции (" << price << ")\n";
+		cout << "Г„ГҐГ­ГҐГЈ Г­ГҐГ¤Г®Г±ГІГ ГІГ®Г·Г­Г® Г¤Г«Гї Г±Г®ГўГҐГ°ГёГҐГ­ГЁГї ГІГ°Г Г­Г§Г ГЄГ¶ГЁГЁ\n";
+		cout << "ГЃГ Г­ГЄ ГўГ ГёГҐГЈГ® ГЄГ®ГёГҐГ«ГјГЄГ  (" << wallet << ") Г¬ГҐГ­ГјГёГҐ Г·ГҐГ¬ Г¶ГҐГ­Г  Г±Г®ГўГҐГ°ГёГ ГҐГ¬Г®Г© ГІГ°Г Г­Г§Г ГЄГ¶ГЁГЁ (" << wallet << ")\n";
 		cout << LINE;
 	}
-	void deposit(int& inc_money, int& bank)
+	void deposit(int inc_money)
 	{
-		bank += inc_money;
+		wallet += inc_money;
 	}
-	void check_money(int &bank)	// рид - онли 
+	void check_money()	// Г°ГЁГ¤ - Г®Г­Г«ГЁ 
 	{
-		cout << "Ваш баланс денег:" << bank << endl;
+		cout << "Г‚Г Гё ГЎГ Г«Г Г­Г± Г¤ГҐГ­ГҐГЈ:" << wallet << endl;
 	}
 protected:
 	int wallet;
@@ -72,21 +65,21 @@ public:
 	{
 		if (price < Buissness_math::wallet)
 		{
-			wallet = purchase_or_pay(price, wallet);
+			wallet = purchase_or_pay(price);
 		}
 		else
 		{
-			purchase_exception(price, wallet);
+			purchase_exception(price);
 		}
 	}
 	void add_money(int inc_money)
 	{
-		deposit(inc_money, wallet);
-		cout << "Вы положили в кошелек:" << inc_money << "денег\n";
+		deposit(inc_money);
+		cout << "Г‚Г» ГЇГ®Г«Г®Г¦ГЁГ«ГЁ Гў ГЄГ®ГёГҐГ«ГҐГЄ:" << inc_money << "Г¤ГҐГ­ГҐГЈ\n";
 	}
 	void view_money()
 	{
-		check_money(wallet);
+		check_money();
 	}
 
 };
@@ -98,11 +91,11 @@ public:
 	{
 		if (price < wallet)
 		{
-			wallet = purchase_or_pay(price, wallet);
+			wallet = purchase_or_pay(price);
 		}
 		else
 		{
-			purchase_exception(price, wallet);
+			purchase_exception(price);
 		}
 	}
 	void send_money(Card_pay& other_card, int money)
@@ -114,16 +107,16 @@ public:
 		}
 		else
 		{
-			purchase_exception(money, wallet);
+			purchase_exception(money);
 		}
 	}
 	void add_money(int money)
 	{
-		deposit(money, wallet);
+		deposit(money);
 	}
 	void view_money()
 	{
-		check_money(wallet);
+		check_money();
 	}
 	Card_pay()
 	{
@@ -137,47 +130,41 @@ int main()
 	setlocale(LC_ALL, "Ru");
 	/*
 	Card_pay eletracard, sbercard;
-	cout << "Добавим на сбербанк :";
+	cout << "Г„Г®ГЎГ ГўГЁГ¬ Г­Г  Г±ГЎГҐГ°ГЎГ Г­ГЄ :";
 	sbercard.add_money(1000);
 	sbercard.view_money();
 	cout << LINE;
-
-	cout << "Добавим на электракарту :";
+	cout << "Г„Г®ГЎГ ГўГЁГ¬ Г­Г  ГЅГ«ГҐГЄГІГ°Г ГЄГ Г°ГІГі :";
 	eletracard.add_money(500);
 	eletracard.view_money();
 	cout << LINE;
-
-	cout << "отправим 100 на електракарту с карты сбербанка: \n";
+	cout << "Г®ГІГЇГ°Г ГўГЁГ¬ 100 Г­Г  ГҐГ«ГҐГЄГІГ°Г ГЄГ Г°ГІГі Г± ГЄГ Г°ГІГ» Г±ГЎГҐГ°ГЎГ Г­ГЄГ : \n";
 	sbercard.send_money(eletracard, 100);
 	cout << LINE;
-	cout << "На сбербанке: ";
+	cout << "ГЌГ  Г±ГЎГҐГ°ГЎГ Г­ГЄГҐ: ";
 	sbercard.view_money();
 	cout << endl;
-	cout << "На электрокате: ";
+	cout << "ГЌГ  ГЅГ«ГҐГЄГІГ°Г®ГЄГ ГІГҐ: ";
 	eletracard.view_money();
 	cout << LINE;
-
-
-	cout << "заплатим за покупку с сбербанка на 500\n";
+	cout << "Г§Г ГЇГ«Г ГІГЁГ¬ Г§Г  ГЇГ®ГЄГіГЇГЄГі Г± Г±ГЎГҐГ°ГЎГ Г­ГЄГ  Г­Г  500\n";
 	sbercard.pay(500);
 	cout << LINE;
-	cout << "На сбербанке осталось: ";
+	cout << "ГЌГ  Г±ГЎГҐГ°ГЎГ Г­ГЄГҐ Г®Г±ГІГ Г«Г®Г±Гј: ";
 	sbercard.view_money();
 	cout << LINE;
-
 	system("pause");
 	cout << "\n\n\n\n\n\n";
 	Cash WALLET;
 	WALLET.add_money(1000);
 	WALLET.view_money();
-
 	cout << LINE;
-	cout << "купим на 600: \n";
+	cout << "ГЄГіГЇГЁГ¬ Г­Г  600: \n";
 	WALLET.purchase(600);
 	WALLET.view_money();
 	*/
 
-	Buissness_math *sells = new Buissness_math[10];
+	Buissness_math* sells = new Buissness_math[10];
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -185,14 +172,17 @@ int main()
 	}
 	for (int i = 0; i < 10; i++)
 	{
-		if (i % 2)
-		{
-			(Card_pay)sells[i].Card_pay::add_money(1000);
-		}
+		sells[i].deposit(1000);
 	}
 
+	
+	sells[1].check_money();
+	sells[1].purchase_or_pay(45);
+	sells[1].purchase_or_pay(341);
+	sells[1].purchase_or_pay(245);
+	cout << "\n" << sells[1].get_spent_money();
 
-	//сколько всего выплат было?
+	//Г±ГЄГ®Г«ГјГЄГ® ГўГ±ГҐГЈГ® ГўГ»ГЇГ«Г ГІ ГЎГ»Г«Г®?
 
 
 	system("pause");
