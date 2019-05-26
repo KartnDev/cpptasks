@@ -1,3 +1,2 @@
 ﻿  Main.cpp
-C:\Users\dmutp\source\repos\RLesson12\RLesson12\Main.cpp(11): error C4430: отсутствует спецификатор типа - предполагается int. Примечание. C++ не поддерживает int по умолчанию
-C:\Users\dmutp\source\repos\RLesson12\RLesson12\Main.cpp(20): warning C4183: з: отсутствие возвращаемого типа; предполагается функция-член, возвращающая "int"
+  RLesson12.vcxproj -> C:\Users\Dmutp\source\repos\RLesson12\Debug\RLesson12.exe
