@@ -1,0 +1,12 @@
+﻿  Source.cpp
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): error C2664:  "std::vector<int,std::allocator<int>>::vector(std::vector<int,std::allocator<int>> &&,const _Alloc &) noexcept(<expr>)": невозможно преобразовать аргумент 3 из "int" в "const _Alloc &"
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): error C2664:         with
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): error C2664:         [
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): error C2664:             _Alloc=std::allocator<int>
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): error C2664:         ]
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :  Причина: невозможно преобразовать "int" в "const _Alloc"
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :         with
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :         [
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :             _Alloc=std::allocator<int>
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :         ]
+C:\Users\dmutp\source\repos\STL17\STL17\Source.cpp(39,27): message :  Ни один конструктор не смог принять исходный тип, либо разрешение перегрузки конструктора неоднозначно
