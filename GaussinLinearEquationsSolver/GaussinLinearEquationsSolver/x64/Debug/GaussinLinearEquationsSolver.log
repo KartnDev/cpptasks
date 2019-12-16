@@ -1,0 +1,4 @@
+﻿  Main.cpp
+c:\users\dmutp\source\repos\gaussinlinearequationssolver\gaussinlinearequationssolver\main.cpp(81): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+c:\users\dmutp\source\repos\gaussinlinearequationssolver\gaussinlinearequationssolver\main.cpp(88): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+  GaussinLinearEquationsSolver.vcxproj -> C:\Users\dmutp\source\repos\GaussinLinearEquationsSolver\x64\Debug\GaussinLinearEquationsSolver.exe
