@@ -2,89 +2,106 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <Windows.h>
+#include <conio.h>
+#include <algorithm>
+
 
 /*main*/
 /*char*/
-using namespace std;
-
-
-int get_file_len(const char* filename)
+std::string* get_keys_in_str(std::string keys_str, unsigned& return_counter)
 {
-	int len = 0;
-	char temp;
-	ifstream fs(filename);
-
-	if (fs.is_open())
+	unsigned word_count = 1;
+	for (unsigned i = 0; i < keys_str.length(); i++)
 	{
-		while (!fs.eof())
+		if (keys_str[i] == ' ')
 		{
-			fs >> temp;
-			len++;
+			word_count++;
 		}
 	}
-	else
-	{
-		//exception 
-		cout << "Something went wrong...\n";
-		return NULL;
-	}
-	fs.close();
 
-	return len;
-}
-const char* read_file(const char* filename)
-{
-	ifstream fs(filename);
+	std::string* key_words = new std::string[word_count]();
 
-	char* str;
-	if (fs.is_open())
+	unsigned count = 0;
+	for (unsigned i = 0; i < keys_str.length(); i++)
 	{
-		int len = get_file_len(filename);
-		str = new char[len];
-		for (int i = 0; i < len; i++)
+
+		if (keys_str[i] != ' ')
 		{
-			fs >> str[i];
+			key_words[count] += keys_str[i];
 		}
-	}
-	else
-	{
-		//exception 
-		cout << "Something went wrong...\n";
-		return NULL;
-	}
-	fs.close();
+		else
+		{
+			count++;
+		}
 
-	return str;
+	}
+	return_counter = word_count;
+	return key_words;
 }
 
 
 
 
-
-const char* find_word_and_index(const char* str, const char* key_word, int& index)
+std::string read_file(const char* filename)
 {
-	int str_len = sizeof(str), key_len = sizeof(key_word), flag = 0;
-	for (int i = 0; i < str_len-key_len; i++)
+	std::ifstream fs(filename);
+	std::string line;
+	std::string text;
+
+	if (fs.is_open())
 	{
-		for (int j = 0; j < key_len; j++)
+		for (unsigned i = 0; !fs.eof(); i++)
 		{
-			if (str == key_word)
+			getline(fs, line);
+			text += line;
+		}
+	}
+	else
+	{
+		//exception 
+		std::cout << "Something went wrong...\n";
+		return NULL;
+	}
+	return text;
+}
+
+
+
+
+std::string find_word_and_index(std::string str, std::string key_word, unsigned &index)
+{
+	unsigned flag = 0;
+	bool ignore = false;
+	for (unsigned i = 0; i < str.length() - key_word.length(); i++)
+	{
+		for (unsigned j = 0; j < key_word.length(); j++)
+		{
+			if (str[i] == *"*" && str[i+1] == *"/" && ignore)
 			{
-				cout << key_word;
+				ignore = false;
+			}
+			if (str[i] == *"/" && str[i+1] == *"*")
+			{
+				ignore = true;
+			}
+			if (str[i + j] == key_word[j] && !ignore)
+			{
+				flag++;
 			}
 			else
 			{
 				flag = 0;
 			}
-			if (flag == key_len)
+			if (flag == key_word.length())
 			{
-				cout << key_word;
+				std::cout << key_word << ": " << i << std::endl;
+				index = i;
+				return key_word;
 			}
 		}
 	}
 	index = -1;
-	return "fail";
+	return "";
 }
 
 
@@ -92,22 +109,27 @@ int main()
 {
 	setlocale(LC_ALL, "Ru");
 
+	std::string keys;
+	getline(std::cin, keys);
 
-	int key_counter=0;
+
+	unsigned key_counter;
 
 
-	const char* str = read_file("main.cpp");
-	
+	std::string str = read_file("main.cpp");
+	std::string* arr = get_keys_in_str(keys, key_counter);
+
+	unsigned temp_index;
+	for (unsigned i = 0; i < key_counter; i++)
+	{
+		find_word_and_index(str, arr[i], temp_index);
+	}
 	
 
-	int temp_index=0;
-	
-	cout << find_word_and_index("char", "char", temp_index);
-	cout << temp_index;
-	
+	delete[] arr;
 
-	
-	
+	_getch();
+
 
 	return 0;
 }
