@@ -1,1 +1,3 @@
-﻿  GraphingWorks.vcxproj -> C:\Users\Dmitry\source\repos\GraphingWorks\Debug\GraphingWorks.exe
+﻿  Main.cpp
+Debug\Window.obj : warning LNK4042: object specified more than once; extras ignored
+  GraphingWorks.vcxproj -> C:\Users\Dmitry\Documents\GitHub\cpptasks\GraphingWorks\Debug\GraphingWorks.exe
