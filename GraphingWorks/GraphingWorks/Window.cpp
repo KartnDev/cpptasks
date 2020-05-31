@@ -1,7 +1,7 @@
 ﻿#include "Window.h"
 #include <cassert>
-
-
+#include <sstream>
+#include <atlbase.h>
 Window::WindowClass Window::WindowClass::wndClass;
 
 
@@ -108,3 +108,64 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+
+Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
+	:
+	GameRuntimeError(line, file),
+	hr(hr)
+{}
+
+const char* Window::Exception::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+		<< "[Error Code] " << GetErrorCode() << std::endl
+		<< "[Description] " << GetErrorString() << std::endl
+		<< GetOriginString();
+	whatBuffer = oss.str();
+
+	return whatBuffer.c_str();
+}
+
+const char* Window::Exception::GetType() const noexcept
+{
+	return "Window Runtime Exception";
+}
+
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+{
+	char* pMsgBuf = nullptr;
+
+	DWORD nMsgLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), //sub lang ru ?
+		reinterpret_cast<LPWSTR>(&pMsgBuf), 0, nullptr);
+
+
+	if (nMsgLen == 0)
+	{
+		return  "Unidentified error code";
+	}
+	std::string errorString = pMsgBuf;
+	LocalFree(pMsgBuf);
+	return errorString;
+}
+
+HRESULT Window::Exception::GetErrorCode() const noexcept
+{
+	return hr;
+}
+
+std::string Window::Exception::GetErrorString() const noexcept
+{
+	return  TranslateErrorCode(hr);
+}
+
+
+
+
+
+
+
+
+
