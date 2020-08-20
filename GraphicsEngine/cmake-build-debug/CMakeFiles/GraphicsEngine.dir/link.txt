@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/GraphicsEngine.dir/main.cpp.o  -o GraphicsEngine  -lsfml-graphics -lsfml-window -lsfml-system 
