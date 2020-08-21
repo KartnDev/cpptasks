@@ -81,25 +81,24 @@ public:
     {
         this->height = height;
         this->width = width;
-        const wchar_t m_sAppName[8] = L"3D Demo";
     }
 
 
 private:
     int width, height;
     mesh textureMesh;
-    mat4x4 matProj;	// Matrix that converts from view space to screen space
-    vec3d vCamera;	// Location of camera in world space
-    float fTheta;	// Spins World transform
+    mat4x4 matProj;    // Matrix that converts from view space to screen space
+    vec3d vCamera;    // Location of camera in world space
+    float fTheta = 0.7f;    // Spins World transform
 
 
-    vec3d MatrixMultiplyVector(mat4x4 &m, vec3d &i) noexcept
+    vec3d MatrixMultiplyVector(mat4x4 &matrix, vec3d &vec3D) noexcept
     {
         vec3d v;
-        v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
-        v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
-        v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + i.w * m.m[3][2];
-        v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + i.w * m.m[3][3];
+        v.x = vec3D.x * matrix.m[0][0] + vec3D.y * matrix.m[1][0] + vec3D.z * matrix.m[2][0] + vec3D.w * matrix.m[3][0];
+        v.y = vec3D.x * matrix.m[0][1] + vec3D.y * matrix.m[1][1] + vec3D.z * matrix.m[2][1] + vec3D.w * matrix.m[3][1];
+        v.z = vec3D.x * matrix.m[0][2] + vec3D.y * matrix.m[1][2] + vec3D.z * matrix.m[2][2] + vec3D.w * matrix.m[3][2];
+        v.w = vec3D.x * matrix.m[0][3] + vec3D.y * matrix.m[1][3] + vec3D.z * matrix.m[2][3] + vec3D.w * matrix.m[3][3];
         return v;
     }
 
@@ -175,36 +174,74 @@ private:
         return matrix;
     }
 
-    mat4x4 MatrixMultiplyMatrix(mat4x4 &m1, mat4x4 &m2) noexcept
+    mat4x4 MatrixMultiplyMatrix(mat4x4 &firstMat, mat4x4 &secondMat) noexcept
     {
         mat4x4 matrix;
         for (int c = 0; c < 4; c++)
+        {
             for (int r = 0; r < 4; r++)
-                matrix.m[r][c] = m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] + m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
+            {
+                matrix.m[r][c] = firstMat.m[r][0] * secondMat.m[0][c] +
+                                 firstMat.m[r][1] * secondMat.m[1][c] +
+                                 firstMat.m[r][2] * secondMat.m[2][c] +
+                                 firstMat.m[r][3] * secondMat.m[3][c];
+            }
+        }
         return matrix;
+    }
+
+    vec3d VectorAdd(vec3d &firstVect, vec3d &secondVect)
+    {
+        return {firstVect.x + secondVect.x, firstVect.y + secondVect.y, firstVect.z + secondVect.z };
+    }
+
+    vec3d VectorSub(vec3d &firstVect, vec3d &secondVect)
+    {
+        return {firstVect.x - secondVect.x, firstVect.y - secondVect.y, firstVect.z - secondVect.z };
+    }
+
+    vec3d VectorMul(vec3d &vect3D, float k)
+    {
+        return {vect3D.x * k, vect3D.y * k, vect3D.z * k };
+    }
+
+    vec3d VectorDiv(vec3d &vect3D, float k)
+    {
+        return {vect3D.x / k, vect3D.y / k, vect3D.z / k };
+    }
+
+    float VectorDotProduct(vec3d &firstVect, vec3d &secondVect)
+    {
+        return firstVect.x * secondVect.x + firstVect.y * secondVect.y + firstVect.z * secondVect.z;
+    }
+
+    float VectorLength(vec3d &vector3D)
+    {
+        return sqrtf(VectorDotProduct(vector3D, vector3D));
+    }
+
+    vec3d VectorNormalise(vec3d &vector3D)
+    {
+        float l = VectorLength(vector3D);
+        return {vector3D.x / l, vector3D.y / l, vector3D.z / l };
+    }
+
+    vec3d VectorCrossProduct(vec3d &firstVect, vec3d &secondVect)
+    {
+        vec3d v;
+        v.x = firstVect.y * secondVect.z - firstVect.z * secondVect.y;
+        v.y = firstVect.z * secondVect.x - firstVect.x * secondVect.z;
+        v.z = firstVect.x * secondVect.y - firstVect.y * secondVect.x;
+        return v;
     }
 
 public:
     bool OnUserCreate()
     {
-
         string textureLocation = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/textureMesh.obj";
-        bool isRead = textureMesh.LoadFromObjectFile(textureLocation);
-        printf("Read: %i\n", isRead);
+        textureMesh.LoadFromObjectFile(textureLocation);
 
-        // Projection Matrix
-        float fNear = 0.1f;
-        float fFar = 1000.0f;
-        float fFov = 90.0f;
-        float fAspectRatio = (float) height / (float) width;
-        float fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * 3.14159f);
-
-        matProj.m[0][0] = fAspectRatio * fFovRad;
-        matProj.m[1][1] = fFovRad;
-        matProj.m[2][2] = fFar / (fFar - fNear);
-        matProj.m[3][2] = (-fFar * fNear) / (fFar - fNear);
-        matProj.m[2][3] = 1.0f;
-        matProj.m[3][3] = 0.0f;
+        matProj = MatrixMakeProjection(90.0f, (float)height/ width, 0.1f, 1000.0f);
 
         return true;
     }
@@ -251,108 +288,77 @@ public:
 
     bool OnUserUpdate(float fElapsedTime, sf::RenderWindow &window)
     {
-
-        // Set up rotation matrices
+        fTheta += fElapsedTime * 3.1415;
         mat4x4 matRotZ, matRotX;
-        fTheta += 1.0f * fElapsedTime;
+        //fTheta += 1.0f * fElapsedTime; // Uncomment to spin me right round baby right round
+        matRotZ = MatrixMakeRotationZ(fTheta * 0.5);
+        matRotX = MatrixMakeRotationX(fTheta);
 
-        // Rotation Z
-        matRotZ.m[0][0] = cosf(fTheta);
-        matRotZ.m[0][1] = sinf(fTheta);
-        matRotZ.m[1][0] = -sinf(fTheta);
-        matRotZ.m[1][1] = cosf(fTheta);
-        matRotZ.m[2][2] = 1;
-        matRotZ.m[3][3] = 1;
+        mat4x4 matTrans;
+        matTrans = MatrixMakeTranslation(0.0f, 0.0f, 11.0f);
 
-        // Rotation X
-        matRotX.m[0][0] = 1;
-        matRotX.m[1][1] = cosf(fTheta * 0.5f);
-        matRotX.m[1][2] = sinf(fTheta * 0.5f);
-        matRotX.m[2][1] = -sinf(fTheta * 0.5f);
-        matRotX.m[2][2] = cosf(fTheta * 0.5f);
-        matRotX.m[3][3] = 1;
+        mat4x4 matWorld;
+        matWorld = MatrixMakeIdentity();	// Form World Matrix
+        matWorld = MatrixMultiplyMatrix(matRotX, matRotZ); // Transform by rotation
+        matWorld = MatrixMultiplyMatrix(matWorld, matTrans); // Transform by translation
 
         vector<triangle> vectorTriangleToRaster;
-
-
 
         // Draw Triangles
         for (auto tri : textureMesh.tris)
         {
-            triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
+            triangle triProjected, triTransformed, triViewed;
 
-            // Rotate in Z-Axis
-            MultiplyMatrixVector(tri.p[0], triRotatedZ.p[0], matRotZ);
-            MultiplyMatrixVector(tri.p[1], triRotatedZ.p[1], matRotZ);
-            MultiplyMatrixVector(tri.p[2], triRotatedZ.p[2], matRotZ);
+            // World Matrix Transform
+            triTransformed.p[0] = MatrixMultiplyVector(matWorld, tri.p[0]);
+            triTransformed.p[1] = MatrixMultiplyVector(matWorld, tri.p[1]);
+            triTransformed.p[2] = MatrixMultiplyVector(matWorld, tri.p[2]);
 
-            // Rotate in X-Axis
-            MultiplyMatrixVector(triRotatedZ.p[0], triRotatedZX.p[0], matRotX);
-            MultiplyMatrixVector(triRotatedZ.p[1], triRotatedZX.p[1], matRotX);
-            MultiplyMatrixVector(triRotatedZ.p[2], triRotatedZX.p[2], matRotX);
+            // Calculate triangle Normal
+            vec3d normal, line1, line2;
 
-            // Offset into the screen
-            triTranslated = triRotatedZX;
-            triTranslated.p[0].z = triRotatedZX.p[0].z + 8.0f;
-            triTranslated.p[1].z = triRotatedZX.p[1].z + 8.0f;
-            triTranslated.p[2].z = triRotatedZX.p[2].z + 8.0f;
+            // Get lines either side of triangle
+            line1 = VectorSub(triTransformed.p[1], triTransformed.p[0]);
+            line2 = VectorSub(triTransformed.p[2], triTransformed.p[0]);
 
-            // Computing the normal
-            vec3d line1, line2, normal;
-            line1.x = triTranslated.p[1].x - triTranslated.p[0].x;
-            line1.y = triTranslated.p[1].y - triTranslated.p[0].y;
-            line1.z = triTranslated.p[1].z - triTranslated.p[0].z;
+            // Take cross product of lines to get normal to triangle surface
+            normal = VectorCrossProduct(line1, line2);
 
-            line2.x = triTranslated.p[2].x - triTranslated.p[0].x;
-            line2.y = triTranslated.p[2].y - triTranslated.p[0].y;
-            line2.z = triTranslated.p[2].z - triTranslated.p[0].z;
+            // You normally need to normalise a normal!
+            normal = VectorNormalise(normal);
 
-            normal.x = line1.y * line2.z - line1.z * line2.y;
-            normal.y = line1.z * line2.x - line1.x * line2.z;
-            normal.z = line1.x * line2.y - line1.y * line2.x;
+            // Get Ray from triangle to camera
+            vec3d vCameraRay = VectorSub(triTransformed.p[0], vCamera);
 
-            //Normalizing the normal
-
-            float len = sqrtf(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
-            normal.x /= len;
-            normal.y /= len;
-            normal.z /= len;
-
-            float dotProductX = normal.x * (triTranslated.p[0].x - vCamera.x);
-            float dotProductY = normal.y * (triTranslated.p[0].y - vCamera.y);
-            float dotProductZ = normal.z * (triTranslated.p[0].z - vCamera.z);
-            float dotProd = dotProductX + dotProductY + dotProductZ;
-
-            if (dotProd < 0.0f)
+            // If ray is aligned with normal, then triangle is visible
+            if (VectorDotProduct(normal, vCameraRay) < 0.0f)
             {
-                //Illumination
-                vec3d lightDirection = {0.0f, 0.0f, -1.0f};
+                // Illumination
+                vec3d light_direction = { 0.0f, 1.0f, -1.0f };
+                light_direction = VectorNormalise(light_direction);
 
-                float lightVecLength = sqrtf(lightDirection.x * lightDirection.x +
-                                             lightDirection.y * lightDirection.y +
-                                             lightDirection.z * lightDirection.z);
-                lightDirection.x /= lightVecLength;
-                lightDirection.y /= lightVecLength;
-                lightDirection.z /= lightVecLength;
+                // How "aligned" are light direction and triangle surface normal?
+                float depth = max(0.1f, VectorDotProduct(light_direction, normal));
 
-                float depth = lightDirection.x * normal.x +
-                              lightDirection.y * normal.y +
-                              lightDirection.z * normal.z;
+
                 triProjected.triangleColor = ColorFromFloat(depth);
 
 
                 // Project triangles from 3D --> 2D
-                MultiplyMatrixVector(triTranslated.p[0], triProjected.p[0], matProj);
-                MultiplyMatrixVector(triTranslated.p[1], triProjected.p[1], matProj);
-                MultiplyMatrixVector(triTranslated.p[2], triProjected.p[2], matProj);
+                triProjected.p[0] = MatrixMultiplyVector(matProj, triTransformed.p[0]);
+                triProjected.p[1] = MatrixMultiplyVector(matProj, triTransformed.p[1]);
+                triProjected.p[2] = MatrixMultiplyVector(matProj, triTransformed.p[2]);
+
+                triProjected.p[0] = VectorDiv(triProjected.p[0], triProjected.p[0].w);
+                triProjected.p[1] = VectorDiv(triProjected.p[1], triProjected.p[1].w);
+                triProjected.p[2] = VectorDiv(triProjected.p[2], triProjected.p[2].w);
 
                 // Scale into view
-                triProjected.p[0].x += 1.0f;
-                triProjected.p[0].y += 1.0f;
-                triProjected.p[1].x += 1.0f;
-                triProjected.p[1].y += 1.0f;
-                triProjected.p[2].x += 1.0f;
-                triProjected.p[2].y += 1.0f;
+                vec3d vOffsetView = {1, 1, 0};
+                triProjected.p[0] = VectorAdd(triProjected.p[0], vOffsetView);
+                triProjected.p[1] = VectorAdd(triProjected.p[1], vOffsetView);
+                triProjected.p[2] = VectorAdd(triProjected.p[2], vOffsetView);
+
                 triProjected.p[0].x *= 0.5f * (float) width;
                 triProjected.p[0].y *= 0.5f * (float) height;
                 triProjected.p[1].x *= 0.5f * (float) width;
