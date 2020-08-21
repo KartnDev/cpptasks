@@ -239,7 +239,9 @@ public:
     bool OnUserCreate()
     {
         string textureLocation = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/textureMesh.obj";
-        textureMesh.LoadFromObjectFile(textureLocation);
+        string teapot = "/home/dmitry/Desktop/teapot.obj";
+        string axis = "/home/dmitry/Desktop/axis.obj";
+        textureMesh.LoadFromObjectFile(axis);
 
         matProj = MatrixMakeProjection(90.0f, (float)height/ width, 0.1f, 1000.0f);
 
@@ -288,14 +290,14 @@ public:
 
     bool OnUserUpdate(float fElapsedTime, sf::RenderWindow &window)
     {
-        fTheta += fElapsedTime * 3.1415;
+        //fTheta += fElapsedTime * 3.1415f;
+
         mat4x4 matRotZ, matRotX;
-        //fTheta += 1.0f * fElapsedTime; // Uncomment to spin me right round baby right round
         matRotZ = MatrixMakeRotationZ(fTheta * 0.5);
         matRotX = MatrixMakeRotationX(fTheta);
 
         mat4x4 matTrans;
-        matTrans = MatrixMakeTranslation(0.0f, 0.0f, 11.0f);
+        matTrans = MatrixMakeTranslation(0.0f, 0.0f, 5.0f);
 
         mat4x4 matWorld;
         matWorld = MatrixMakeIdentity();	// Form World Matrix
@@ -405,7 +407,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        engine3D.OnUserUpdate(0.0001, window);
+        engine3D.OnUserUpdate(0.001, window);
         window.display();
         window.clear();
     }
