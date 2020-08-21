@@ -84,6 +84,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/Vector3D.cpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
+		<Unit filename="/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/Vector3D.hpp">
+			<Option target="GraphicsEngine"/>
+		</Unit>
 		<Unit filename="/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/main.cpp">
 			<Option target="GraphicsEngine"/>
 		</Unit>

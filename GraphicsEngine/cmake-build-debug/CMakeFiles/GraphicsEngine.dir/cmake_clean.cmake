@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.o"
   "CMakeFiles/GraphicsEngine.dir/main.cpp.o"
   "GraphicsEngine"
   "GraphicsEngine.pdb"

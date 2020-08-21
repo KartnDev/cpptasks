@@ -12,131 +12,10 @@ using namespace std;
 
 struct vec3d
 {
-    union
-    {
-        struct
-        {
-            float x, y, z;
-        };
-        struct
-        {
-            float pitch, yaw, roll;
-        };
-        float n[3] = {0.0f, 0.0f, 0.0f};
-    };
-
-    vec3d() noexcept
-    {
-        x = y = z = 0;
-    }
-
-    vec3d(float x, float y, float z) noexcept
-    {
-        this->x = x;
-        this->y = y;
-        this->z = z;
-    }
-
-    inline float length() const noexcept
-    {
-        return sqrtf(x * x + y * y + z * z);
-    }
-
-    vec3d normal() noexcept
-    {
-        return *this / length();
-    }
-
-    inline float dot(const vec3d &vec3D) noexcept
-    {
-        return acosf((product(vec3D)) / (length() * vec3D.length()));
-    }
-    inline float product(const vec3d& vec3D) noexcept
-    {
-        return x * vec3D.x + y * vec3D.y + z * vec3D.z;
-    }
-
-    vec3d cross(const vec3d& vec3D) noexcept
-    {
-        return
-        {
-            n[1] * vec3D.n[2] - n[2] - vec3D.n[1],
-            n[2] * vec3D.n[0] - n[0] - vec3D.n[2],
-            n[0] * vec3D.n[1] - n[1] - vec3D.n[0]
-        };
-    }
-
-    vec3d& operator+= (const vec3d& rhs) noexcept
-    {
-        this->x += rhs.x;
-        this->y += rhs.y;
-        this->z += rhs.z;
-        return *this;
-    }
-
-    vec3d& operator-= (const vec3d& rhs)
-    {
-        this->x -= rhs.x;
-        this->y -= rhs.y;
-        this->z -= rhs.z;
-        return *this;
-    }
-
-    vec3d& operator*= (const float rhs)
-    {
-        this->x *= rhs;
-        this->y *= rhs;
-        this->z *= rhs;
-        return *this;
-    }
-
-    vec3d& operator/= (const float rhs)
-    {
-        this->x /= rhs;
-        this->y /= rhs;
-        this->z /= rhs;
-        return *this;
-    }
-
-    vec3d operator+(const vec3d& rhs)
-    {
-        vec3d result = {0, 0, 0};
-        result.x = this->x + rhs.x;
-        result.y = this->y + rhs.y;
-        result.z = this->z + rhs.z;
-
-        return result;
-    }
-
-    vec3d operator-(const vec3d& rhs)
-    {
-        vec3d result = {0, 0, 0};
-        result.x = this->x - rhs.x;
-        result.y = this->y - rhs.y;
-        result.z = this->z - rhs.z;
-
-        return result;
-    }
-
-    vec3d operator*(const float rhs)
-    {
-        vec3d result = {0, 0, 0};
-        result.x = this->x * rhs;
-        result.y = this->y * rhs;
-        result.z = this->z * rhs;
-
-        return result;
-    }
-
-    vec3d operator/(const float rhs)
-    {
-        vec3d result = {0, 0, 0};
-        result.x = this->x * rhs;
-        result.y = this->y * rhs;
-        result.z = this->z * rhs;
-
-        return result;
-    }
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    float w = 1.0f; // Need a 4th term to perform sensible matrix vector multiplication
 };
 
 struct triangle
@@ -208,27 +87,101 @@ public:
 
 private:
     int width, height;
+    mesh textureMesh;
+    mat4x4 matProj;	// Matrix that converts from view space to screen space
+    vec3d vCamera;	// Location of camera in world space
+    float fTheta;	// Spins World transform
 
-    mesh meshCube;
-    mat4x4 matProj;
 
-    vec3d vCamera;
-
-    float fTheta;
-
-    void MultiplyMatrixVector(vec3d &i, vec3d &o, mat4x4 &m)
+    vec3d MatrixMultiplyVector(mat4x4 &m, vec3d &i) noexcept
     {
-        o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
-        o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
-        o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
-        float w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
+        vec3d v;
+        v.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + i.w * m.m[3][0];
+        v.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + i.w * m.m[3][1];
+        v.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + i.w * m.m[3][2];
+        v.w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + i.w * m.m[3][3];
+        return v;
+    }
 
-        if (w != 0.0f)
-        {
-            o.x /= w;
-            o.y /= w;
-            o.z /= w;
-        }
+    mat4x4 MatrixMakeIdentity() noexcept
+    {
+        mat4x4 matrix;
+        matrix.m[0][0] = 1.0f;
+        matrix.m[1][1] = 1.0f;
+        matrix.m[2][2] = 1.0f;
+        matrix.m[3][3] = 1.0f;
+        return matrix;
+    }
+
+    mat4x4 MatrixMakeRotationX(float fAngleRad) noexcept
+    {
+        mat4x4 matrix;
+        matrix.m[0][0] = 1.0f;
+        matrix.m[1][1] = cosf(fAngleRad);
+        matrix.m[1][2] = sinf(fAngleRad);
+        matrix.m[2][1] = -sinf(fAngleRad);
+        matrix.m[2][2] = cosf(fAngleRad);
+        matrix.m[3][3] = 1.0f;
+        return matrix;
+    }
+
+    mat4x4 MatrixMakeRotationY(float fAngleRad) noexcept
+    {
+        mat4x4 matrix;
+        matrix.m[0][0] = cosf(fAngleRad);
+        matrix.m[0][2] = sinf(fAngleRad);
+        matrix.m[2][0] = -sinf(fAngleRad);
+        matrix.m[1][1] = 1.0f;
+        matrix.m[2][2] = cosf(fAngleRad);
+        matrix.m[3][3] = 1.0f;
+        return matrix;
+    }
+
+    mat4x4 MatrixMakeRotationZ(float fAngleRad) noexcept
+    {
+        mat4x4 matrix;
+        matrix.m[0][0] = cosf(fAngleRad);
+        matrix.m[0][1] = sinf(fAngleRad);
+        matrix.m[1][0] = -sinf(fAngleRad);
+        matrix.m[1][1] = cosf(fAngleRad);
+        matrix.m[2][2] = 1.0f;
+        matrix.m[3][3] = 1.0f;
+        return matrix;
+    }
+
+    mat4x4 MatrixMakeTranslation(float x, float y, float z) noexcept
+    {
+        mat4x4 matrix;
+        matrix.m[0][0] = 1.0f;
+        matrix.m[1][1] = 1.0f;
+        matrix.m[2][2] = 1.0f;
+        matrix.m[3][3] = 1.0f;
+        matrix.m[3][0] = x;
+        matrix.m[3][1] = y;
+        matrix.m[3][2] = z;
+        return matrix;
+    }
+
+    mat4x4 MatrixMakeProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar) noexcept
+    {
+        float fFovRad = 1.0f / tanf(fFovDegrees * 0.5f / 180.0f * 3.14159f);
+        mat4x4 matrix;
+        matrix.m[0][0] = fAspectRatio * fFovRad;
+        matrix.m[1][1] = fFovRad;
+        matrix.m[2][2] = fFar / (fFar - fNear);
+        matrix.m[3][2] = (-fFar * fNear) / (fFar - fNear);
+        matrix.m[2][3] = 1.0f;
+        matrix.m[3][3] = 0.0f;
+        return matrix;
+    }
+
+    mat4x4 MatrixMultiplyMatrix(mat4x4 &m1, mat4x4 &m2) noexcept
+    {
+        mat4x4 matrix;
+        for (int c = 0; c < 4; c++)
+            for (int r = 0; r < 4; r++)
+                matrix.m[r][c] = m1.m[r][0] * m2.m[0][c] + m1.m[r][1] * m2.m[1][c] + m1.m[r][2] * m2.m[2][c] + m1.m[r][3] * m2.m[3][c];
+        return matrix;
     }
 
 public:
@@ -236,7 +189,7 @@ public:
     {
 
         string textureLocation = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/textureMesh.obj";
-        bool isRead = meshCube.LoadFromObjectFile(textureLocation);
+        bool isRead = textureMesh.LoadFromObjectFile(textureLocation);
         printf("Read: %i\n", isRead);
 
         // Projection Matrix
@@ -324,7 +277,7 @@ public:
 
 
         // Draw Triangles
-        for (auto tri : meshCube.tris)
+        for (auto tri : textureMesh.tris)
         {
             triangle triProjected, triTranslated, triRotatedZ, triRotatedZX;
 

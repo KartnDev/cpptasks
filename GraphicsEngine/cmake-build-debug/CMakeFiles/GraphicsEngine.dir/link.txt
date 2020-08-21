@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/GraphicsEngine.dir/main.cpp.o  -o GraphicsEngine  -lsfml-graphics -lsfml-window -lsfml-system 
+/usr/bin/c++  -g   CMakeFiles/GraphicsEngine.dir/main.cpp.o CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.o  -o GraphicsEngine  -lsfml-graphics -lsfml-window -lsfml-system 

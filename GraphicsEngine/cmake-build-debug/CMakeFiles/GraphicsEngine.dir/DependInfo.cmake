@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/Vector3D.cpp" "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/cmake-build-debug/CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.o"
   "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/main.cpp" "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/cmake-build-debug/CMakeFiles/GraphicsEngine.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

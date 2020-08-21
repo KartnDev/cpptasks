@@ -123,6 +123,33 @@ GraphicsEngine/fast:
 	$(MAKE) -f CMakeFiles/GraphicsEngine.dir/build.make CMakeFiles/GraphicsEngine.dir/build
 .PHONY : GraphicsEngine/fast
 
+Vector3D.o: Vector3D.cpp.o
+
+.PHONY : Vector3D.o
+
+# target to build an object file
+Vector3D.cpp.o:
+	$(MAKE) -f CMakeFiles/GraphicsEngine.dir/build.make CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.o
+.PHONY : Vector3D.cpp.o
+
+Vector3D.i: Vector3D.cpp.i
+
+.PHONY : Vector3D.i
+
+# target to preprocess a source file
+Vector3D.cpp.i:
+	$(MAKE) -f CMakeFiles/GraphicsEngine.dir/build.make CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.i
+.PHONY : Vector3D.cpp.i
+
+Vector3D.s: Vector3D.cpp.s
+
+.PHONY : Vector3D.s
+
+# target to generate assembly for a file
+Vector3D.cpp.s:
+	$(MAKE) -f CMakeFiles/GraphicsEngine.dir/build.make CMakeFiles/GraphicsEngine.dir/Vector3D.cpp.s
+.PHONY : Vector3D.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... GraphicsEngine"
+	@echo "... Vector3D.o"
+	@echo "... Vector3D.i"
+	@echo "... Vector3D.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
