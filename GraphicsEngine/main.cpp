@@ -7,6 +7,7 @@
 #include <strstream>
 #include <algorithm>
 
+
 using namespace std;
 
 struct vec3d
@@ -193,14 +194,9 @@ public:
         matRotX.m[2][2] = cosf(fTheta * 0.5f);
         matRotX.m[3][3] = 1;
 
-        vector<triangle> vectorTriangleToRaster;
+        vector<std::pair<triangle, sf::Color>> vectorTriangleToRaster;
 
-        sort(vectorTriangleToRaster.begin(), vectorTriangleToRaster.end(), [](triangle &t1, triangle &t2)
-        {
-            float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
-            float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
-            return z1 > z2;
-        });
+
 
         // Draw Triangles
         for (auto tri : meshCube.tris)
@@ -286,17 +282,24 @@ public:
                 triProjected.p[2].x *= 0.5f * (float) width;
                 triProjected.p[2].y *= 0.5f * (float) height;
 
-                // Store triangles for sorting
-                vectorTriangleToRaster.push_back(triProjected);
-
-                for (auto &triProjected : vectorTriangleToRaster)
-                {
-                    // Rasterize triangle
-                    FillTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
-                                 triProjected.p[1].x, triProjected.p[1].y,
-                                 triProjected.p[2].x, triProjected.p[2].y, color);
-                }
+                vectorTriangleToRaster.push_back(std::pair<triangle, sf::Color>(triProjected, color));
             }
+            // Store triangles for sorting
+        }
+        sort(vectorTriangleToRaster.begin(), vectorTriangleToRaster.end(),
+             [](std::pair<triangle, sf::Color> &t1, std::pair<triangle, sf::Color> &t2)
+             {
+                 float z1 = (t1.first.p[0].z + t1.first.p[1].z + t1.first.p[2].z) / 3.0f;
+                 float z2 = (t2.first.p[0].z + t2.first.p[1].z + t2.first.p[2].z) / 3.0f;
+                 return z1 > z2;
+             });
+
+        for (auto &triProjected : vectorTriangleToRaster)
+        {
+            // Rasterize triangle
+            FillTriangle(window, triProjected.first.p[0].x, triProjected.first.p[0].y,
+                         triProjected.first.p[1].x, triProjected.first.p[1].y,
+                         triProjected.first.p[2].x, triProjected.first.p[2].y, triProjected.second);
         }
 
 
@@ -309,7 +312,7 @@ int main()
 {
     olcEngine3D engine3D(640, 480);
     engine3D.OnUserCreate();
-    sf::RenderWindow window(sf::VideoMode(640, 480), "Graphing App");
+    sf::RenderWindow window(sf::VideoMode(640, 480), "Vertex Graphing");
     while (window.isOpen())
     {
         sf::Event event;
@@ -318,7 +321,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        engine3D.OnUserUpdate(0.001, window);
+        engine3D.OnUserUpdate(0.0001, window);
         window.display();
         window.clear();
     }
