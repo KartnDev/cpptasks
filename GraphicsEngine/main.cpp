@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <strstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ struct mesh
     bool LoadFromObjectFile(std::string sFileName)
     {
         std::ifstream fileStream(sFileName);
-        if(!fileStream.is_open())
+        if (!fileStream.is_open())
         {
             return false;
         }
@@ -59,6 +60,7 @@ struct mesh
                                 vertexes[triangleStr[2] - 1]});
             }
         }
+        return true;
     }
 };
 
@@ -164,7 +166,7 @@ public:
 
     sf::Color ColorFromFloat(float zeroOneInterval)
     {
-        return sf::Color(255, 255, 255, 255*zeroOneInterval);
+        return sf::Color(255, 255, 255, 255 * zeroOneInterval);
     }
 
 
@@ -191,7 +193,14 @@ public:
         matRotX.m[2][2] = cosf(fTheta * 0.5f);
         matRotX.m[3][3] = 1;
 
-        
+        vector<triangle> vectorTriangleToRaster;
+
+        sort(vectorTriangleToRaster.begin(), vectorTriangleToRaster.end(), [](triangle &t1, triangle &t2)
+        {
+            float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+            float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+            return z1 > z2;
+        });
 
         // Draw Triangles
         for (auto tri : meshCube.tris)
@@ -236,7 +245,7 @@ public:
             normal.z /= len;
 
             float dotProductX = normal.x * (triTranslated.p[0].x - vCamera.x);
-            float dotProductY =  normal.y * (triTranslated.p[0].y - vCamera.y);
+            float dotProductY = normal.y * (triTranslated.p[0].y - vCamera.y);
             float dotProductZ = normal.z * (triTranslated.p[0].z - vCamera.z);
             float dotProd = dotProductX + dotProductY + dotProductZ;
 
@@ -246,8 +255,8 @@ public:
                 vec3d lightDirection = {0.0f, 0.0f, -1.0f};
 
                 float lightVecLength = sqrtf(lightDirection.x * lightDirection.x +
-                                                lightDirection.y * lightDirection.y +
-                                                lightDirection.z * lightDirection.z);
+                                             lightDirection.y * lightDirection.y +
+                                             lightDirection.z * lightDirection.z);
                 lightDirection.x /= lightVecLength;
                 lightDirection.y /= lightVecLength;
                 lightDirection.z /= lightVecLength;
@@ -277,10 +286,16 @@ public:
                 triProjected.p[2].x *= 0.5f * (float) width;
                 triProjected.p[2].y *= 0.5f * (float) height;
 
-                // Rasterize triangle
-                FillTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
-                             triProjected.p[1].x, triProjected.p[1].y,
-                             triProjected.p[2].x, triProjected.p[2].y, color);
+                // Store triangles for sorting
+                vectorTriangleToRaster.push_back(triProjected);
+
+                for (auto &triProjected : vectorTriangleToRaster)
+                {
+                    // Rasterize triangle
+                    FillTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
+                                 triProjected.p[1].x, triProjected.p[1].y,
+                                 triProjected.p[2].x, triProjected.p[2].y, color);
+                }
             }
         }
 
@@ -298,9 +313,13 @@ int main()
     while (window.isOpen())
     {
         sf::Event event;
-        engine3D.OnUserUpdate(0.0001, window);
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        engine3D.OnUserUpdate(0.001, window);
         window.display();
-        window.clear();
         window.clear();
     }
     return 0;
