@@ -12,12 +12,137 @@ using namespace std;
 
 struct vec3d
 {
-    float x, y, z;
+    union
+    {
+        struct
+        {
+            float x, y, z;
+        };
+        struct
+        {
+            float pitch, yaw, roll;
+        };
+        float n[3] = {0.0f, 0.0f, 0.0f};
+    };
+
+    vec3d() noexcept
+    {
+        x = y = z = 0;
+    }
+
+    vec3d(float x, float y, float z) noexcept
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    inline float length() const noexcept
+    {
+        return sqrtf(x * x + y * y + z * z);
+    }
+
+    vec3d normal() noexcept
+    {
+        return *this / length();
+    }
+
+    inline float dot(const vec3d &vec3D) noexcept
+    {
+        return acosf((product(vec3D)) / (length() * vec3D.length()));
+    }
+    inline float product(const vec3d& vec3D) noexcept
+    {
+        return x * vec3D.x + y * vec3D.y + z * vec3D.z;
+    }
+
+    vec3d cross(const vec3d& vec3D) noexcept
+    {
+        return
+        {
+            n[1] * vec3D.n[2] - n[2] - vec3D.n[1],
+            n[2] * vec3D.n[0] - n[0] - vec3D.n[2],
+            n[0] * vec3D.n[1] - n[1] - vec3D.n[0]
+        };
+    }
+
+    vec3d& operator+= (const vec3d& rhs) noexcept
+    {
+        this->x += rhs.x;
+        this->y += rhs.y;
+        this->z += rhs.z;
+        return *this;
+    }
+
+    vec3d& operator-= (const vec3d& rhs)
+    {
+        this->x -= rhs.x;
+        this->y -= rhs.y;
+        this->z -= rhs.z;
+        return *this;
+    }
+
+    vec3d& operator*= (const float rhs)
+    {
+        this->x *= rhs;
+        this->y *= rhs;
+        this->z *= rhs;
+        return *this;
+    }
+
+    vec3d& operator/= (const float rhs)
+    {
+        this->x /= rhs;
+        this->y /= rhs;
+        this->z /= rhs;
+        return *this;
+    }
+
+    vec3d operator+(const vec3d& rhs)
+    {
+        vec3d result = {0, 0, 0};
+        result.x = this->x + rhs.x;
+        result.y = this->y + rhs.y;
+        result.z = this->z + rhs.z;
+
+        return result;
+    }
+
+    vec3d operator-(const vec3d& rhs)
+    {
+        vec3d result = {0, 0, 0};
+        result.x = this->x - rhs.x;
+        result.y = this->y - rhs.y;
+        result.z = this->z - rhs.z;
+
+        return result;
+    }
+
+    vec3d operator*(const float rhs)
+    {
+        vec3d result = {0, 0, 0};
+        result.x = this->x * rhs;
+        result.y = this->y * rhs;
+        result.z = this->z * rhs;
+
+        return result;
+    }
+
+    vec3d operator/(const float rhs)
+    {
+        vec3d result = {0, 0, 0};
+        result.x = this->x * rhs;
+        result.y = this->y * rhs;
+        result.z = this->z * rhs;
+
+        return result;
+    }
 };
 
 struct triangle
 {
     vec3d p[3];
+    sf::Color triangleColor;
 };
 
 struct mesh
@@ -194,7 +319,7 @@ public:
         matRotX.m[2][2] = cosf(fTheta * 0.5f);
         matRotX.m[3][3] = 1;
 
-        vector<std::pair<triangle, sf::Color>> vectorTriangleToRaster;
+        vector<triangle> vectorTriangleToRaster;
 
 
 
@@ -260,7 +385,7 @@ public:
                 float depth = lightDirection.x * normal.x +
                               lightDirection.y * normal.y +
                               lightDirection.z * normal.z;
-                sf::Color color = ColorFromFloat(depth);
+                triProjected.triangleColor = ColorFromFloat(depth);
 
 
                 // Project triangles from 3D --> 2D
@@ -282,24 +407,24 @@ public:
                 triProjected.p[2].x *= 0.5f * (float) width;
                 triProjected.p[2].y *= 0.5f * (float) height;
 
-                vectorTriangleToRaster.push_back(std::pair<triangle, sf::Color>(triProjected, color));
+                vectorTriangleToRaster.push_back(triProjected);
             }
             // Store triangles for sorting
         }
         sort(vectorTriangleToRaster.begin(), vectorTriangleToRaster.end(),
-             [](std::pair<triangle, sf::Color> &t1, std::pair<triangle, sf::Color> &t2)
+             [](triangle &t1, triangle &t2)
              {
-                 float z1 = (t1.first.p[0].z + t1.first.p[1].z + t1.first.p[2].z) / 3.0f;
-                 float z2 = (t2.first.p[0].z + t2.first.p[1].z + t2.first.p[2].z) / 3.0f;
+                 float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+                 float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
                  return z1 > z2;
              });
 
         for (auto &triProjected : vectorTriangleToRaster)
         {
             // Rasterize triangle
-            FillTriangle(window, triProjected.first.p[0].x, triProjected.first.p[0].y,
-                         triProjected.first.p[1].x, triProjected.first.p[1].y,
-                         triProjected.first.p[2].x, triProjected.first.p[2].y, triProjected.second);
+            FillTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
+                         triProjected.p[1].x, triProjected.p[1].y,
+                         triProjected.p[2].x, triProjected.p[2].y, triProjected.triangleColor);
         }
 
 
