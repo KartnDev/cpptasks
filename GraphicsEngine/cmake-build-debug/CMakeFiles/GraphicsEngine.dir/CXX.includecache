@@ -15,4 +15,10 @@ SFML/Window.hpp
 -
 cmath
 -
+string
+-
+fstream
+-
+strstream
+-
 

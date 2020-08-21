@@ -2,6 +2,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <cmath>
+#include <string>
+#include <fstream>
+#include <strstream>
 
 using namespace std;
 
@@ -18,6 +21,45 @@ struct triangle
 struct mesh
 {
     vector<triangle> tris;
+
+    bool LoadFromObjectFile(std::string sFileName)
+    {
+        std::ifstream fileStream(sFileName);
+        if(!fileStream.is_open())
+        {
+            return false;
+        }
+        //Local cache of vertexes
+        vector<vec3d> vertexes;
+
+        while (!fileStream.eof())
+        {
+            int buffSize = 128;
+            char line[buffSize];
+            fileStream.getline(line, buffSize);
+
+            strstream stringStream;
+            stringStream << line;
+
+            char junk;
+
+            if (line[0] == 'v')
+            {
+                vec3d v;
+                stringStream >> junk >> v.x >> v.y >> v.z;
+                vertexes.push_back(v);
+            }
+            if (line[0] == 'f')
+            {
+                int triangleStr[3];
+                stringStream >> junk >> triangleStr[0] >> triangleStr[1] >> triangleStr[2];
+
+                tris.push_back({vertexes[triangleStr[0] - 1],
+                                vertexes[triangleStr[1] - 1],
+                                vertexes[triangleStr[2] - 1]});
+            }
+        }
+    }
 };
 
 struct mat4x4
@@ -64,33 +106,10 @@ private:
 public:
     bool OnUserCreate()
     {
-        meshCube.tris = {
 
-                // SOUTH
-                { 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
-                { 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-
-                // EAST
-                { 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
-                { 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
-
-                // NORTH
-                { 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
-                { 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
-
-                // WEST
-                { 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
-                { 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
-
-                // TOP
-                { 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
-                { 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
-
-                // BOTTOM
-                { 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
-                { 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-
-        };
+        string textureLocation = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/textureMesh.obj";
+        bool isRead = meshCube.LoadFromObjectFile(textureLocation);
+        printf("Read: %i\n", isRead);
 
         // Projection Matrix
         float fNear = 0.1f;
@@ -172,6 +191,8 @@ public:
         matRotX.m[2][2] = cosf(fTheta * 0.5f);
         matRotX.m[3][3] = 1;
 
+        
+
         // Draw Triangles
         for (auto tri : meshCube.tris)
         {
@@ -189,9 +210,9 @@ public:
 
             // Offset into the screen
             triTranslated = triRotatedZX;
-            triTranslated.p[0].z = triRotatedZX.p[0].z + 3.0f;
-            triTranslated.p[1].z = triRotatedZX.p[1].z + 3.0f;
-            triTranslated.p[2].z = triRotatedZX.p[2].z + 3.0f;
+            triTranslated.p[0].z = triRotatedZX.p[0].z + 8.0f;
+            triTranslated.p[1].z = triRotatedZX.p[1].z + 8.0f;
+            triTranslated.p[2].z = triRotatedZX.p[2].z + 8.0f;
 
             // Computing the normal
             vec3d line1, line2, normal;
