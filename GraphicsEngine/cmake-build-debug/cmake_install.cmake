@@ -1,4 +1,4 @@
-# Install script for directory: /root/CLionProjects/GraphicsEngine
+# Install script for directory: /home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/root/CLionProjects/GraphicsEngine/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

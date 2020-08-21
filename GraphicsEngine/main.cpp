@@ -67,28 +67,28 @@ public:
         meshCube.tris = {
 
                 // SOUTH
-                {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f},
-                {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+                { 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
+                { 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
 
                 // EAST
-                {1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f},
-                {1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+                { 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
+                { 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
 
                 // NORTH
-                {1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f},
-                {1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+                { 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
+                { 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
 
                 // WEST
-                {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f},
-                {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+                { 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
+                { 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
 
                 // TOP
-                {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f},
-                {0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f},
+                { 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
+                { 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
 
                 // BOTTOM
-                {1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f},
-                {1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+                { 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
+                { 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
 
         };
 
@@ -111,12 +111,43 @@ public:
 
     void DrawTriangle(sf::RenderWindow &window, float x, float y, float x1, float y1, float x2, float y2)
     {
-        sf::VertexArray lines(sf::LinesStrip, 3);
+        sf::VertexArray lines(sf::LinesStrip, 2);
         lines[0].position = sf::Vector2f(x, y);
         lines[1].position = sf::Vector2f(x1, y1);
-        lines[2].position = sf::Vector2f(x2, y2);
+        window.draw(lines);
+
+        lines[0].position = sf::Vector2f(x1, y1);
+        lines[1].position = sf::Vector2f(x2, y2);
+        window.draw(lines);
+
+        lines[0].position = sf::Vector2f(x2, y2);
+        lines[1].position = sf::Vector2f(x, y);
         window.draw(lines);
     }
+
+    void FillTriangle(sf::RenderWindow &window, float x, float y, float x1, float y1, float x2, float y2, sf::Color c)
+    {
+        sf::VertexArray triangle(sf::Triangles, 3);
+
+        // define the position of the triangle's points
+        triangle[0].position = sf::Vector2f(x, y);
+        triangle[1].position = sf::Vector2f(x1, y1);
+        triangle[2].position = sf::Vector2f(x2, y2);
+
+        // define the color of the triangle's points
+
+        triangle[0].color = c;
+        triangle[1].color = c;
+        triangle[2].color = c;
+
+        window.draw(triangle);
+    }
+
+    sf::Color ColorFromFloat(float zeroOneInterval)
+    {
+        return sf::Color(255, 255, 255, 255*zeroOneInterval);
+    }
+
 
     bool OnUserUpdate(float fElapsedTime, sf::RenderWindow &window)
     {
@@ -183,8 +214,29 @@ public:
             normal.y /= len;
             normal.z /= len;
 
-            if (normal.z < 0)
+            float dotProductX = normal.x * (triTranslated.p[0].x - vCamera.x);
+            float dotProductY =  normal.y * (triTranslated.p[0].y - vCamera.y);
+            float dotProductZ = normal.z * (triTranslated.p[0].z - vCamera.z);
+            float dotProd = dotProductX + dotProductY + dotProductZ;
+
+            if (dotProd < 0.0f)
             {
+                //Illumination
+                vec3d lightDirection = {0.0f, 0.0f, -1.0f};
+
+                float lightVecLength = sqrtf(lightDirection.x * lightDirection.x +
+                                                lightDirection.y * lightDirection.y +
+                                                lightDirection.z * lightDirection.z);
+                lightDirection.x /= lightVecLength;
+                lightDirection.y /= lightVecLength;
+                lightDirection.z /= lightVecLength;
+
+                float depth = lightDirection.x * normal.x +
+                              lightDirection.y * normal.y +
+                              lightDirection.z * normal.z;
+                sf::Color color = ColorFromFloat(depth);
+
+
                 // Project triangles from 3D --> 2D
                 MultiplyMatrixVector(triTranslated.p[0], triProjected.p[0], matProj);
                 MultiplyMatrixVector(triTranslated.p[1], triProjected.p[1], matProj);
@@ -205,9 +257,9 @@ public:
                 triProjected.p[2].y *= 0.5f * (float) height;
 
                 // Rasterize triangle
-                DrawTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
+                FillTriangle(window, triProjected.p[0].x, triProjected.p[0].y,
                              triProjected.p[1].x, triProjected.p[1].y,
-                             triProjected.p[2].x, triProjected.p[2].y);
+                             triProjected.p[2].x, triProjected.p[2].y, color);
             }
         }
 
@@ -225,7 +277,7 @@ int main()
     while (window.isOpen())
     {
         sf::Event event;
-        engine3D.OnUserUpdate(0.001, window);
+        engine3D.OnUserUpdate(0.0001, window);
         window.display();
         window.clear();
         window.clear();

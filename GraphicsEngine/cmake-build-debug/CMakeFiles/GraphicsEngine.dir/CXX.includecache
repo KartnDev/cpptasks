@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/root/CLionProjects/GraphicsEngine/main.cpp
+/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/main.cpp
 SFML/Graphics.hpp
 -
 SFML/System.hpp
