@@ -280,6 +280,22 @@ public:
         return v;
     }
 
+    vec3d VectorIntersectPlane(vec3d &planeForward, vec3d &planeNormal, vec3d &lineStart, vec3d &lineEnd)
+    {
+        planeNormal = VectorNormalise(planeNormal);
+
+        float planeDot = -VectorDotProduct(planeNormal, planeForward);
+        float firstSide = VectorDotProduct(lineStart, planeNormal);
+        float secondSide = VectorDotProduct(lineEnd, planeNormal);
+        float t = (-planeDot - firstSide) / (secondSide - firstSide);
+
+        vec3d lineStartToEnd = VectorSub(lineEnd, lineStart);
+        vec3d lineToIntersect = VectorMul(lineStartToEnd, t);
+
+        return VectorAdd(lineStart, lineToIntersect);
+    }
+
+
 public:
     bool OnUserCreate()
     {
@@ -474,30 +490,30 @@ int main()
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             {
-                engine3D.vCamera.y -= 8.0f * fElapsedTime;	// Travel Y Upwards
+                engine3D.vCamera.y -= 8.0f * fElapsedTime;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
-                engine3D.vCamera.y += 8.0f * fElapsedTime;	// Travel Y Downwards
+                engine3D.vCamera.y += 8.0f * fElapsedTime;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             {
-                engine3D.vCamera.x -= 8.0f * fElapsedTime;	// Travel X Lefter
+                engine3D.vCamera.x -= 8.0f * fElapsedTime;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             {
-                engine3D.vCamera.x += 8.0f * fElapsedTime;	// Travel X Righter
+                engine3D.vCamera.x += 8.0f * fElapsedTime;
             }
 
             vec3d vForward = engine3D.VectorMul(engine3D.vLookDir, 8.0f * fElapsedTime);
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                engine3D.fYaw -= 1.0f * fElapsedTime;	// Change yaw (left)
+                engine3D.fYaw -= 1.0f * fElapsedTime;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                engine3D.fYaw += 1.0f * fElapsedTime;	// Change yaw (right)
+                engine3D.fYaw += 1.0f * fElapsedTime;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
