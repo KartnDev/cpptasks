@@ -83,13 +83,18 @@ public:
         this->width = width;
     }
 
+    vec3d vCamera;
+    float fYaw;
 
-private:
     int width, height;
+
+    float fTheta = 0.0f;    // Spins World transform
+
     mesh textureMesh;
     mat4x4 matProj;    // Matrix that converts from view space to screen space
-    vec3d vCamera;    // Location of camera in world space
-    float fTheta = 0.7f;    // Spins World transform
+    vec3d vLookDir;
+
+
 
 
     vec3d MatrixMultiplyVector(mat4x4 &matrix, vec3d &vec3D) noexcept
@@ -187,6 +192,46 @@ private:
                                  firstMat.m[r][3] * secondMat.m[3][c];
             }
         }
+        return matrix;
+    }
+
+    mat4x4 MatrixPointAt(vec3d &pos, vec3d &target, vec3d &up)
+    {
+        // Calculate new forward direction
+        vec3d newForward = VectorSub(target, pos);
+        newForward = VectorNormalise(newForward);
+
+        // Calculate new Up direction
+        float dotUpAndForward = VectorDotProduct(up, newForward);
+        vec3d multiplyNew = VectorMul(newForward, dotUpAndForward);
+        vec3d newUp = VectorSub(up, multiplyNew);
+        newUp = VectorNormalise(newUp);
+
+        // New Right direction (cross product)
+        vec3d newRight = VectorCrossProduct(newUp, newForward);
+
+        // Construct Dimensioning and Translation Matrix
+        mat4x4 mat;
+        mat.m[0][0] = newRight.x;    mat.m[0][1] = newRight.y;    mat.m[0][2] = newRight.z;    mat.m[0][3] = 0.0f;
+        mat.m[1][0] = newUp.x;       mat.m[1][1] = newUp.y;       mat.m[1][2] = newUp.z;       mat.m[1][3] = 0.0f;
+        mat.m[2][0] = newForward.x;  mat.m[2][1] = newForward.y;  mat.m[2][2] = newForward.z;  mat.m[2][3] = 0.0f;
+        mat.m[3][0] = pos.x;         mat.m[3][1] = pos.y;         mat.m[3][2] = pos.z;         mat.m[3][3] = 1.0f;
+
+        return mat;
+    }
+
+    mat4x4 MatrixQuickInverse(mat4x4 &m) // Only for Rotation/Translation Matrices
+    {
+        mat4x4 matrix;
+
+        matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.0f;
+        matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0.0f;
+        matrix.m[2][0] = m.m[0][2]; matrix.m[2][1] = m.m[1][2]; matrix.m[2][2] = m.m[2][2]; matrix.m[2][3] = 0.0f;
+        matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
+        matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
+        matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
+        matrix.m[3][3] = 1.0f;
+
         return matrix;
     }
 
@@ -304,6 +349,18 @@ public:
         matWorld = MatrixMultiplyMatrix(matRotX, matRotZ); // Transform by rotation
         matWorld = MatrixMultiplyMatrix(matWorld, matTrans); // Transform by translation
 
+        vec3d vUp = {0, 1, 0};
+        vec3d vTarget = {0, 0, 1};
+        mat4x4 matCameraRot = MatrixMakeRotationY(fYaw);
+        vLookDir = MatrixMultiplyVector(matCameraRot, vTarget);
+        vTarget = VectorAdd(vCamera, vLookDir);
+
+
+        mat4x4 matCamera = MatrixPointAt(vCamera, vTarget, vUp);
+
+        // Make view matrix from camera
+        mat4x4 matView = MatrixQuickInverse(matCamera);
+
         vector<triangle> vectorTriangleToRaster;
 
         // Draw Triangles
@@ -345,11 +402,15 @@ public:
 
                 triProjected.triangleColor = ColorFromFloat(depth);
 
+                // Convert World Space --> View Space
+                triViewed.p[0] = MatrixMultiplyVector(matView, triTransformed.p[0]);
+                triViewed.p[1] = MatrixMultiplyVector(matView, triTransformed.p[1]);
+                triViewed.p[2] = MatrixMultiplyVector(matView, triTransformed.p[2]);
 
                 // Project triangles from 3D --> 2D
-                triProjected.p[0] = MatrixMultiplyVector(matProj, triTransformed.p[0]);
-                triProjected.p[1] = MatrixMultiplyVector(matProj, triTransformed.p[1]);
-                triProjected.p[2] = MatrixMultiplyVector(matProj, triTransformed.p[2]);
+                triProjected.p[0] = MatrixMultiplyVector(matProj, triViewed.p[0]);
+                triProjected.p[1] = MatrixMultiplyVector(matProj, triViewed.p[1]);
+                triProjected.p[2] = MatrixMultiplyVector(matProj, triViewed.p[2]);
 
                 triProjected.p[0] = VectorDiv(triProjected.p[0], triProjected.p[0].w);
                 triProjected.p[1] = VectorDiv(triProjected.p[1], triProjected.p[1].w);
@@ -396,9 +457,13 @@ public:
 
 int main()
 {
+    const float fElapsedTime = 0.1f;
+
     olcEngine3D engine3D(640, 480);
     engine3D.OnUserCreate();
+
     sf::RenderWindow window(sf::VideoMode(640, 480), "Vertex Graphing");
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -406,8 +471,44 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
+                engine3D.vCamera.y -= 8.0f * fElapsedTime;	// Travel Y Upwards
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {
+                engine3D.vCamera.y += 8.0f * fElapsedTime;	// Travel Y Downwards
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                engine3D.vCamera.x -= 8.0f * fElapsedTime;	// Travel X Lefter
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                engine3D.vCamera.x += 8.0f * fElapsedTime;	// Travel X Righter
+            }
+
+            vec3d vForward = engine3D.VectorMul(engine3D.vLookDir, 8.0f * fElapsedTime);
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                engine3D.fYaw -= 1.0f * fElapsedTime;	// Change yaw (left)
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                engine3D.fYaw += 1.0f * fElapsedTime;	// Change yaw (right)
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                engine3D.vCamera = engine3D.VectorAdd(engine3D.vCamera, vForward);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                engine3D.vCamera = engine3D.VectorSub(engine3D.vCamera, vForward);
+            }
         }
-        engine3D.OnUserUpdate(0.001, window);
+        engine3D.OnUserUpdate(fElapsedTime, window);
         window.display();
         window.clear();
     }
