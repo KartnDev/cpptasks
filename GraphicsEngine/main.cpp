@@ -424,29 +424,61 @@ public:
 public:
     bool OnUserCreate()
     {
-        string textureLocation = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/textureMesh.obj";
-        string teapot = "/home/dmitry/Desktop/teapot.obj";
-        string axis = "/home/dmitry/Desktop/axis.obj";
-        textureMesh.LoadFromObjectFile(axis);
+        string defPath = "/home/dmitry/Documents/GitHub/cpptasks/GraphicsEngine/Resources/";
+
+        string texture = "textureMesh.obj";
+        string teapot = "teapot.obj";
+        string axis = "axis.obj";
+        string mountains = "mountains.obj";
+
+        textureMesh.LoadFromObjectFile(defPath + mountains);
 
         matProj = MatrixMakeProjection(90.0f, (float) height / width, 0.1f, 1000.0f);
 
         return true;
     }
 
+    void DrawTriangleRGB(sf::RenderWindow &window, float x, float y, float x1, float y1, float x2, float y2)
+    {
+        sf::VertexArray lines(sf::LinesStrip, 2);
+        lines[0].position = sf::Vector2f(x, y);
+        lines[0].color = sf::Color::Blue;
+        lines[1].position = sf::Vector2f(x1, y1);
+        lines[1].color = sf::Color::Red;
+        window.draw(lines);
+
+        lines[0].position = sf::Vector2f(x1, y1);
+        lines[0].color = sf::Color::Red;
+        lines[1].position = sf::Vector2f(x2, y2);
+        lines[1].color = sf::Color::Green;
+        window.draw(lines);
+
+        lines[0].position = sf::Vector2f(x2, y2);
+        lines[0].color = sf::Color::Green;
+        lines[1].position = sf::Vector2f(x, y);
+        lines[1].color = sf::Color::Blue;
+        window.draw(lines);
+    }
+
     void DrawTriangle(sf::RenderWindow &window, float x, float y, float x1, float y1, float x2, float y2)
     {
         sf::VertexArray lines(sf::LinesStrip, 2);
         lines[0].position = sf::Vector2f(x, y);
+        lines[0].color = sf::Color::Black;
         lines[1].position = sf::Vector2f(x1, y1);
+        lines[1].color = sf::Color::Black;
         window.draw(lines);
 
         lines[0].position = sf::Vector2f(x1, y1);
+        lines[0].color = sf::Color::Black;
         lines[1].position = sf::Vector2f(x2, y2);
+        lines[1].color = sf::Color::Black;
         window.draw(lines);
 
         lines[0].position = sf::Vector2f(x2, y2);
+        lines[0].color = sf::Color::Black;
         lines[1].position = sf::Vector2f(x, y);
+        lines[1].color = sf::Color::Black;
         window.draw(lines);
     }
 
@@ -669,7 +701,7 @@ public:
                                                                   clipped[1]);
                             break;
 
-                            
+
                         case 3:
                             nTrisToAdd = TriangleClipAgainstPlane({(float)(width - 1), 0.0f, 0.0f},
                                                                   {-1.0f, 0.0f, 0.0f},
@@ -695,7 +727,9 @@ public:
             for (auto &t : listTriangles)
             {
                 FillTriangle(window, t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y, t.triangleColor);
+#ifdef DEBUG
                 DrawTriangle(window, t.p[0].x, t.p[0].y, t.p[1].x, t.p[1].y, t.p[2].x, t.p[2].y);
+#endif
             }
         }
 
