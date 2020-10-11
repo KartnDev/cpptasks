@@ -1,0 +1,14 @@
+﻿  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\Dmitry\source\repos\123\123>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.16.27023\bin\HostX86\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\include"  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static -Xcompiler /openmp -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc141.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\Dmitry\source\repos\123\123\kernel.cu" 
+  kernel.cu
+C:/Users/Dmitry/source/repos/123/123/kernel.cu(154): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:/Users/Dmitry/source/repos/123/123/kernel.cu(310): warning C4244: '=': conversion from '_Rep' to 'float', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+C:/Users/Dmitry/source/repos/123/123/kernel.cu(295): warning C4996: 'cudaThreadSynchronize': was declared deprecated
+  c:\program files\nvidia gpu computing toolkit\cuda\v11.0\include\cuda_runtime_api.h(967): note: see declaration of 'cudaThreadSynchronize'
+     Creating library C:\Users\Dmitry\source\repos\123\x64\Debug\123.lib and object C:\Users\Dmitry\source\repos\123\x64\Debug\123.exp
+  123.vcxproj -> C:\Users\Dmitry\source\repos\123\x64\Debug\123.exe
